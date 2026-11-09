@@ -89,6 +89,8 @@ namespace thorin::sdlgpu {
         [[nodiscard]] bool hovered() const;
         [[nodiscard]] bool active() const;
 
+        // With a render callback and no texture, creates an R8G8B8A8_UNORM texture and turns auto_size() on.
+        void init() override;
         void destroy() override;
         bool show() override;
     };

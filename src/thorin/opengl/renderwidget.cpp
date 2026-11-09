@@ -144,6 +144,19 @@ namespace thorin::opengl {
         return flipUv_ ? ImVec2{1.0f, 0.0f} : ImVec2{1.0f, 1.0f};
     }
 
+    void RenderWidget::init() {
+        // A render callback with no texture gets a default one, sized to the box from the first render on.
+        if (texture_ == nullptr && onRender_) {
+            window()->backend()->make_current();
+            auto texture = globjects::Texture::createDefault(gl::GL_TEXTURE_2D);
+            // 1x1 until then: the box is empty before the first layout, and a zero-sized texture is invalid.
+            texture->image2D(0, gl::GL_RGBA8, 1, 1, 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, nullptr);
+            set_texture(std::move(texture));
+            autoSize_ = true;
+        }
+        Widget::init();
+    }
+
     void RenderWidget::destroy() {
         // GL objects are deleted in their own context, before the backend destroys it.
         if (texture_ != nullptr) {

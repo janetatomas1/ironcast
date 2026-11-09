@@ -148,6 +148,29 @@ namespace thorin::sdlgpu {
         return active_;
     }
 
+    void RenderWidget::init() {
+        // A render callback with no texture gets a default one, sized to the box from the first render on.
+        if (texture_ == nullptr && onRender_) {
+            SDL_GPUTextureCreateInfo info{};
+            info.type = SDL_GPU_TEXTURETYPE_2D;
+            info.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
+            info.usage = SDL_GPU_TEXTUREUSAGE_SAMPLER | SDL_GPU_TEXTUREUSAGE_COLOR_TARGET;
+            // 1x1 until then: the box is empty before the first layout, and a zero-sized texture is invalid.
+            info.width = 1;
+            info.height = 1;
+            info.layer_count_or_depth = 1;
+            info.num_levels = 1;
+            SDL_GPUTexture* texture = SDL_CreateGPUTexture(device(), &info);
+            if (texture == nullptr) {
+                logger().error("sdlgpu::RenderWidget: SDL_CreateGPUTexture failed: {}", SDL_GetError());
+            } else {
+                set_texture(texture, 1, 1, info.format);
+                autoSize_ = true;
+            }
+        }
+        Widget::init();
+    }
+
     void RenderWidget::destroy() {
         // Released before the backend destroys the device.
         if (texture_ != nullptr) {
