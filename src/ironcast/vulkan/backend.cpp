@@ -1,16 +1,13 @@
 #include "ironcast/vulkan/backend.hpp"
+#include "ironcast/vulkan/device.hpp"
 
 #include <array>
 #include <cstdint>
 #include <format>
-#include <limits>
 #include <string_view>
 #include <vector>
 
 #include <SDL3/SDL_vulkan.h>
-#include <VkBootstrap.h>
-#include <vulkan/vulkan_raii.hpp>
-#include <vk_mem_alloc.h>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_vulkan.h>
 
@@ -19,35 +16,6 @@
 #include "ironcast/assert.hpp"
 
 namespace ironcast::vulkan {
-    namespace {
-        constexpr uint32_t apiVersion = VK_API_VERSION_1_3;
-        constexpr uint32_t framesInFlight = 2;
-        constexpr uint64_t noTimeout = std::numeric_limits<uint64_t>::max();
-    }
-
-    struct SharedDevice {
-        vk::raii::Context context;
-        // Kept for vkb::PhysicalDeviceSelector and vkb::SwapchainBuilder; they own nothing.
-        vkb::Instance vkbInstance;
-        vkb::Device vkbDevice;
-        vk::raii::Instance instance = nullptr;
-        vk::raii::DebugUtilsMessengerEXT messenger = nullptr;
-        vk::raii::PhysicalDevice physicalDevice = nullptr;
-        vk::raii::Device device = nullptr;
-        uint32_t queueFamily = 0;
-        vk::raii::Queue queue = nullptr;
-        VmaAllocator allocator = nullptr;
-
-        explicit SharedDevice(PFN_vkGetInstanceProcAddr getInstanceProcAddr) : context(getInstanceProcAddr) {}
-
-        ~SharedDevice() {
-            // Before the device; the members go after this, in reverse order.
-            if (allocator != nullptr) {
-                vmaDestroyAllocator(allocator);
-            }
-        }
-    };
-
     namespace {
         std::weak_ptr<SharedDevice> sharedDevice;
 
@@ -103,31 +71,6 @@ namespace ironcast::vulkan {
             if (result < 0) {
                 logger().error("ImGui Vulkan backend: VkResult {}", static_cast<int>(result));
             }
-        }
-
-        void barrier(
-            const vk::raii::CommandBuffer& commandBuffer,
-            vk::Image image,
-            vk::ImageLayout oldLayout,
-            vk::ImageLayout newLayout,
-            vk::PipelineStageFlags2 srcStage,
-            vk::AccessFlags2 srcAccess,
-            vk::PipelineStageFlags2 dstStage,
-            vk::AccessFlags2 dstAccess
-        ) {
-            vk::ImageMemoryBarrier2 imageBarrier;
-            imageBarrier
-                .setSrcStageMask(srcStage)
-                .setSrcAccessMask(srcAccess)
-                .setDstStageMask(dstStage)
-                .setDstAccessMask(dstAccess)
-                .setOldLayout(oldLayout)
-                .setNewLayout(newLayout)
-                .setSrcQueueFamilyIndex(VK_QUEUE_FAMILY_IGNORED)
-                .setDstQueueFamilyIndex(VK_QUEUE_FAMILY_IGNORED)
-                .setImage(image)
-                .setSubresourceRange({vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1});
-            commandBuffer.pipelineBarrier2(vk::DependencyInfo().setImageMemoryBarriers(imageBarrier));
         }
 
         // Needs ImGui's Vulkan backend, and the GPU to be done with the image.
@@ -284,8 +227,8 @@ namespace ironcast::vulkan {
         info.Device = static_cast<VkDevice>(*shared_->device);
         info.QueueFamily = shared_->queueFamily;
         info.Queue = static_cast<VkQueue>(*shared_->queue);
-        // ImGui creates its own pool: the font atlas, plus the background.
-        info.DescriptorPoolSize = IMGUI_IMPL_VULKAN_MINIMUM_SAMPLED_IMAGE_POOL_SIZE + 1;
+        // ImGui creates its own pool: the font atlas, the background, and one per RenderWidget.
+        info.DescriptorPoolSize = IMGUI_IMPL_VULKAN_MINIMUM_SAMPLED_IMAGE_POOL_SIZE + 1 + maxRenderWidgets;
         info.MinImageCount = 2;
         info.ImageCount = static_cast<uint32_t>(state_->images.size());
         info.UseDynamicRendering = true;
@@ -474,6 +417,11 @@ namespace ironcast::vulkan {
         SDL_DestroyWindow(handle_);
     } catch (const vk::SystemError& error) {
         fail(std::format("window {}: Vulkan teardown failed: {}", window_->id(), error.what()));
+    }
+
+    SharedDevice& Backend::shared_device() const {
+        IRONCAST_DEBUG_ASSERT(shared_ != nullptr, "vulkan::Backend::shared_device called before init");
+        return *shared_;
     }
 
     ImTextureID Backend::upload_background() try {

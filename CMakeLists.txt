@@ -164,8 +164,7 @@ if(IRONCAST_VULKAN)
     find_package(vk-bootstrap REQUIRED)
     target_link_libraries(
         ironcast_vulkan
-        PUBLIC ironcast vulkan-headers::vulkan-headers GPUOpen::VulkanMemoryAllocator
-        PRIVATE vk-bootstrap::vk-bootstrap
+        PUBLIC ironcast vulkan-headers::vulkan-headers GPUOpen::VulkanMemoryAllocator vk-bootstrap::vk-bootstrap
     )
     # No prototypes: functions come through SDL's vkGetInstanceProcAddr (imgui is built the same way), so
     # Vulkan-Hpp's own loader is off too. Vulkan-Hpp returns OutOfDate from acquire and present instead of

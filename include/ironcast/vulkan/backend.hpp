@@ -39,5 +39,7 @@ namespace ironcast::vulkan {
         void init() override;
         void update(Widget *rootWidget) override;
         void destroy() override;
+        // Shared by every window this backend type makes; for RenderWidget. Call it after init().
+        [[nodiscard]] SharedDevice& shared_device() const;
     };
 }
