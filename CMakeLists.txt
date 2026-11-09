@@ -155,6 +155,7 @@ if(IRONCAST_VULKAN)
         ironcast_vulkan
         STATIC
         ${IRONCAST_SOURCE_DIR}/vulkan/backend.cpp
+        ${IRONCAST_SOURCE_DIR}/vulkan/renderwidget.cpp
         ${IRONCAST_SOURCE_DIR}/vulkan/vma.cpp
     )
     add_library(ironcast::vulkan ALIAS ironcast_vulkan)
