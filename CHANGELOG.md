@@ -1,9 +1,18 @@
 # Changelog
 
-All notable changes to thorin. The format follows [Keep a Changelog](https://keepachangelog.com),
+All notable changes to ironcast (named thorin up to 0.3.0). The format follows [Keep a Changelog](https://keepachangelog.com),
 and versions follow [Semantic Versioning](https://semver.org); while the version is 0.x, minor
 versions may break the API. The version itself is set in `project()` in `CMakeLists.txt` and
-exposed as `THORIN_VERSION` in `thorin/version.hpp`. Plans live in [docs/roadmap.md](docs/roadmap.md).
+exposed as `IRONCAST_VERSION` in `ironcast/version.hpp`. Plans live in [docs/roadmap.md](docs/roadmap.md).
+
+## [Unreleased]
+
+### Changed
+
+- Renamed the library from thorin to ironcast: the `ironcast` namespace, `<ironcast/...>` headers, the
+  `Ironcast` app class (`ironcast/ironcast.hpp`, was `Thorin` in `thorin/thorin.hpp`), the
+  `ironcast::ironcast` / `ironcast::opengl` / ... CMake targets and `find_package(ironcast)`, and the
+  `IRONCAST_*` options and macros.
 
 ## [0.3.0] - 2026-10-27
 

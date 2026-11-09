@@ -6,9 +6,9 @@
 #include <memory>
 #include <vector>
 
-#include <thorin/actionmanager.hpp>
+#include <ironcast/actionmanager.hpp>
 
-using namespace thorin;
+using namespace ironcast;
 
 TEST(ActionManager, StartsIdle) {
     ActionManager manager;

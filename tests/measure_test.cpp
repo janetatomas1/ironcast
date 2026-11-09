@@ -10,30 +10,30 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
-#include <thorin/button.hpp>
-#include <thorin/checkbox.hpp>
-#include <thorin/coloredit.hpp>
-#include <thorin/colorpicker.hpp>
-#include <thorin/drag.hpp>
-#include <thorin/dropdown.hpp>
-#include <thorin/input.hpp>
-#include <thorin/progressbar.hpp>
-#include <thorin/separator.hpp>
-#include <thorin/radiobutton.hpp>
-#include <thorin/radiogroup.hpp>
-#include <thorin/slider.hpp>
-#include <thorin/text.hpp>
-#include <thorin/textinput.hpp>
-#include <thorin/table.hpp>
-#include <thorin/menubar.hpp>
-#include <thorin/nullbackend.hpp>
-#include <thorin/window.hpp>
-#include <thorin/treenode.hpp>
-#include <thorin/treeview.hpp>
-#include <thorin/widget.hpp>
-#include <thorin/windowconfig.hpp>
+#include <ironcast/button.hpp>
+#include <ironcast/checkbox.hpp>
+#include <ironcast/coloredit.hpp>
+#include <ironcast/colorpicker.hpp>
+#include <ironcast/drag.hpp>
+#include <ironcast/dropdown.hpp>
+#include <ironcast/input.hpp>
+#include <ironcast/progressbar.hpp>
+#include <ironcast/separator.hpp>
+#include <ironcast/radiobutton.hpp>
+#include <ironcast/radiogroup.hpp>
+#include <ironcast/slider.hpp>
+#include <ironcast/text.hpp>
+#include <ironcast/textinput.hpp>
+#include <ironcast/table.hpp>
+#include <ironcast/menubar.hpp>
+#include <ironcast/nullbackend.hpp>
+#include <ironcast/window.hpp>
+#include <ironcast/treenode.hpp>
+#include <ironcast/treeview.hpp>
+#include <ironcast/widget.hpp>
+#include <ironcast/windowconfig.hpp>
 
-using namespace thorin;
+using namespace ironcast;
 
 namespace {
     constexpr float displayWidth = 1280.0f;

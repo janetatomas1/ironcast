@@ -1,54 +1,54 @@
 
 cmake_minimum_required(VERSION 3.28)
-project(thorin VERSION 0.3.0)
+project(ironcast VERSION 0.3.0)
 
 set(CMAKE_CXX_STANDARD 23)
 
 include(GNUInstallDirs)
 
-set(THORIN_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/thorin)
-set(THORIN_HEADER_DIR ${PROJECT_SOURCE_DIR}/include/)
-set(THORIN_EXAMPLES_DIR ${PROJECT_SOURCE_DIR}/examples)
+set(IRONCAST_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/ironcast)
+set(IRONCAST_HEADER_DIR ${PROJECT_SOURCE_DIR}/include/)
+set(IRONCAST_EXAMPLES_DIR ${PROJECT_SOURCE_DIR}/examples)
 set(
-    THORIN_SOURCES
-    ${THORIN_SOURCE_DIR}/thorin.cpp
-    ${THORIN_SOURCE_DIR}/theme.cpp
-    ${THORIN_SOURCE_DIR}/font.cpp
-    ${THORIN_SOURCE_DIR}/image.cpp
-    ${THORIN_SOURCE_DIR}/log.cpp
-    ${THORIN_SOURCE_DIR}/windowmanager.cpp
-    ${THORIN_SOURCE_DIR}/actionmanager.cpp
-    ${THORIN_SOURCE_DIR}/window.cpp
-    ${THORIN_SOURCE_DIR}/widget.cpp
-    ${THORIN_SOURCE_DIR}/layout.cpp
-    ${THORIN_SOURCE_DIR}/gpubackend.cpp
-    ${THORIN_SOURCE_DIR}/nullbackend.cpp
-    ${THORIN_SOURCE_DIR}/button.cpp
-    ${THORIN_SOURCE_DIR}/checkbox.cpp
-    ${THORIN_SOURCE_DIR}/radiobutton.cpp
-    ${THORIN_SOURCE_DIR}/radiogroup.cpp
-    ${THORIN_SOURCE_DIR}/dropdown.cpp
-    ${THORIN_SOURCE_DIR}/textinput.cpp
-    ${THORIN_SOURCE_DIR}/text.cpp
-    ${THORIN_SOURCE_DIR}/colorpicker.cpp
-    ${THORIN_SOURCE_DIR}/menu.cpp
-    ${THORIN_SOURCE_DIR}/menubar.cpp
-    ${THORIN_SOURCE_DIR}/table.cpp
-    ${THORIN_SOURCE_DIR}/tabwidget.cpp
-    ${THORIN_SOURCE_DIR}/childwindow.cpp
-    ${THORIN_SOURCE_DIR}/selectable.cpp
-    ${THORIN_SOURCE_DIR}/treenode.cpp
-    ${THORIN_SOURCE_DIR}/treeview.cpp
-    ${THORIN_SOURCE_DIR}/popup.cpp
-    ${THORIN_SOURCE_DIR}/modal.cpp
-    ${THORIN_SOURCE_DIR}/progressbar.cpp
-    ${THORIN_SOURCE_DIR}/logwidget.cpp
-    ${THORIN_SOURCE_DIR}/clipboard.cpp
-    ${THORIN_SOURCE_DIR}/separator.cpp
-    ${THORIN_SOURCE_DIR}/pane.cpp
-    ${THORIN_SOURCE_DIR}/dockarea.cpp
-    ${THORIN_SOURCE_DIR}/style.cpp
-    ${THORIN_SOURCE_DIR}/color.cpp
+    IRONCAST_SOURCES
+    ${IRONCAST_SOURCE_DIR}/ironcast.cpp
+    ${IRONCAST_SOURCE_DIR}/theme.cpp
+    ${IRONCAST_SOURCE_DIR}/font.cpp
+    ${IRONCAST_SOURCE_DIR}/image.cpp
+    ${IRONCAST_SOURCE_DIR}/log.cpp
+    ${IRONCAST_SOURCE_DIR}/windowmanager.cpp
+    ${IRONCAST_SOURCE_DIR}/actionmanager.cpp
+    ${IRONCAST_SOURCE_DIR}/window.cpp
+    ${IRONCAST_SOURCE_DIR}/widget.cpp
+    ${IRONCAST_SOURCE_DIR}/layout.cpp
+    ${IRONCAST_SOURCE_DIR}/gpubackend.cpp
+    ${IRONCAST_SOURCE_DIR}/nullbackend.cpp
+    ${IRONCAST_SOURCE_DIR}/button.cpp
+    ${IRONCAST_SOURCE_DIR}/checkbox.cpp
+    ${IRONCAST_SOURCE_DIR}/radiobutton.cpp
+    ${IRONCAST_SOURCE_DIR}/radiogroup.cpp
+    ${IRONCAST_SOURCE_DIR}/dropdown.cpp
+    ${IRONCAST_SOURCE_DIR}/textinput.cpp
+    ${IRONCAST_SOURCE_DIR}/text.cpp
+    ${IRONCAST_SOURCE_DIR}/colorpicker.cpp
+    ${IRONCAST_SOURCE_DIR}/menu.cpp
+    ${IRONCAST_SOURCE_DIR}/menubar.cpp
+    ${IRONCAST_SOURCE_DIR}/table.cpp
+    ${IRONCAST_SOURCE_DIR}/tabwidget.cpp
+    ${IRONCAST_SOURCE_DIR}/childwindow.cpp
+    ${IRONCAST_SOURCE_DIR}/selectable.cpp
+    ${IRONCAST_SOURCE_DIR}/treenode.cpp
+    ${IRONCAST_SOURCE_DIR}/treeview.cpp
+    ${IRONCAST_SOURCE_DIR}/popup.cpp
+    ${IRONCAST_SOURCE_DIR}/modal.cpp
+    ${IRONCAST_SOURCE_DIR}/progressbar.cpp
+    ${IRONCAST_SOURCE_DIR}/logwidget.cpp
+    ${IRONCAST_SOURCE_DIR}/clipboard.cpp
+    ${IRONCAST_SOURCE_DIR}/separator.cpp
+    ${IRONCAST_SOURCE_DIR}/pane.cpp
+    ${IRONCAST_SOURCE_DIR}/dockarea.cpp
+    ${IRONCAST_SOURCE_DIR}/style.cpp
+    ${IRONCAST_SOURCE_DIR}/color.cpp
 )
 
 find_package(sdl REQUIRED)
@@ -60,17 +60,17 @@ find_package(stb REQUIRED)
 find_package(spdlog REQUIRED)
 
 add_library(
-    thorin
+    ironcast
     STATIC
-    ${THORIN_SOURCES}
+    ${IRONCAST_SOURCES}
 )
-# The name apps link against, the same whether thorin comes from find_package() or add_subdirectory().
-add_library(thorin::thorin ALIAS thorin)
+# The name apps link against, the same whether ironcast comes from find_package() or add_subdirectory().
+add_library(ironcast::ironcast ALIAS ironcast)
 # The headers use C++23 (deducing this), so apps need it too.
-target_compile_features(thorin PUBLIC cxx_std_23)
+target_compile_features(ironcast PUBLIC cxx_std_23)
 
 target_link_libraries(
-    thorin
+    ironcast
     PUBLIC
     sdl::sdl
     concurrentqueue::concurrentqueue
@@ -83,125 +83,125 @@ target_link_libraries(
     stb::stb
 )
 
-# libassert isn't available on Emscripten; thorin/assert.hpp turns the assertions into no-ops there.
+# libassert isn't available on Emscripten; ironcast/assert.hpp turns the assertions into no-ops there.
 if(NOT EMSCRIPTEN)
     find_package(libassert REQUIRED)
-    target_link_libraries(thorin PUBLIC libassert::assert)
+    target_link_libraries(ironcast PUBLIC libassert::assert)
     # libassert's macros need MSVC's conforming preprocessor; public because apps expand them too.
-    target_compile_options(thorin PUBLIC $<$<CXX_COMPILER_ID:MSVC>:/Zc:preprocessor>)
+    target_compile_options(ironcast PUBLIC $<$<CXX_COMPILER_ID:MSVC>:/Zc:preprocessor>)
 endif()
 
-# OpenGL backend and widgets, in thorin::opengl. The only part that links glbinding / globjects.
-option(THORIN_OPENGL "Build the OpenGL backend" ON)
-if(THORIN_OPENGL)
+# OpenGL backend and widgets, in ironcast::opengl. The only part that links glbinding / globjects.
+option(IRONCAST_OPENGL "Build the OpenGL backend" ON)
+if(IRONCAST_OPENGL)
     add_library(
-        thorin_opengl
+        ironcast_opengl
         STATIC
-        ${THORIN_SOURCE_DIR}/opengl/backend.cpp
-        ${THORIN_SOURCE_DIR}/opengl/renderwidget.cpp
-        ${THORIN_SOURCE_DIR}/opengl/imagebutton.cpp
+        ${IRONCAST_SOURCE_DIR}/opengl/backend.cpp
+        ${IRONCAST_SOURCE_DIR}/opengl/renderwidget.cpp
+        ${IRONCAST_SOURCE_DIR}/opengl/imagebutton.cpp
     )
-    add_library(thorin::opengl ALIAS thorin_opengl)
-    set_target_properties(thorin_opengl PROPERTIES EXPORT_NAME opengl)
+    add_library(ironcast::opengl ALIAS ironcast_opengl)
+    set_target_properties(ironcast_opengl PROPERTIES EXPORT_NAME opengl)
     find_package(glbinding REQUIRED)
     find_package(globjects REQUIRED)
-    target_link_libraries(thorin_opengl PUBLIC thorin glbinding::glbinding globjects::globjects)
+    target_link_libraries(ironcast_opengl PUBLIC ironcast glbinding::glbinding globjects::globjects)
     # Emscripten links WebGL 1 only by default; opengl::Backend needs WebGL2 (GLES 3.0).
     if(EMSCRIPTEN)
-        target_link_options(thorin_opengl PUBLIC -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2)
+        target_link_options(ironcast_opengl PUBLIC -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2)
     endif()
 endif()
 
-# SDL_GPU backend (Vulkan, Metal or D3D12) and widgets, in thorin::sdlgpu. SDL_GPU has no web driver, so it is off on Emscripten.
+# SDL_GPU backend (Vulkan, Metal or D3D12) and widgets, in ironcast::sdlgpu. SDL_GPU has no web driver, so it is off on Emscripten.
 include(CMakeDependentOption)
-cmake_dependent_option(THORIN_SDLGPU "Build the SDL_GPU backend" ON "NOT EMSCRIPTEN" OFF)
-if(THORIN_SDLGPU)
+cmake_dependent_option(IRONCAST_SDLGPU "Build the SDL_GPU backend" ON "NOT EMSCRIPTEN" OFF)
+if(IRONCAST_SDLGPU)
     add_library(
-        thorin_sdlgpu
+        ironcast_sdlgpu
         STATIC
-        ${THORIN_SOURCE_DIR}/sdlgpu/backend.cpp
-        ${THORIN_SOURCE_DIR}/sdlgpu/renderwidget.cpp
-        ${THORIN_SOURCE_DIR}/sdlgpu/imagebutton.cpp
+        ${IRONCAST_SOURCE_DIR}/sdlgpu/backend.cpp
+        ${IRONCAST_SOURCE_DIR}/sdlgpu/renderwidget.cpp
+        ${IRONCAST_SOURCE_DIR}/sdlgpu/imagebutton.cpp
     )
-    add_library(thorin::sdlgpu ALIAS thorin_sdlgpu)
-    set_target_properties(thorin_sdlgpu PROPERTIES EXPORT_NAME sdlgpu)
-    target_link_libraries(thorin_sdlgpu PUBLIC thorin)
+    add_library(ironcast::sdlgpu ALIAS ironcast_sdlgpu)
+    set_target_properties(ironcast_sdlgpu PROPERTIES EXPORT_NAME sdlgpu)
+    target_link_libraries(ironcast_sdlgpu PUBLIC ironcast)
 endif()
 
-# WebGPU backend (Dawn natively, emdawnwebgpu on Emscripten), in thorin::webgpu.
-option(THORIN_WEBGPU "Build the WebGPU backend" ON)
-if(THORIN_WEBGPU)
+# WebGPU backend (Dawn natively, emdawnwebgpu on Emscripten), in ironcast::webgpu.
+option(IRONCAST_WEBGPU "Build the WebGPU backend" ON)
+if(IRONCAST_WEBGPU)
     add_library(
-        thorin_webgpu
+        ironcast_webgpu
         STATIC
-        ${THORIN_SOURCE_DIR}/webgpu/backend.cpp
+        ${IRONCAST_SOURCE_DIR}/webgpu/backend.cpp
     )
-    add_library(thorin::webgpu ALIAS thorin_webgpu)
-    set_target_properties(thorin_webgpu PROPERTIES EXPORT_NAME webgpu)
+    add_library(ironcast::webgpu ALIAS ironcast_webgpu)
+    set_target_properties(ironcast_webgpu PROPERTIES EXPORT_NAME webgpu)
     find_package(Dawn REQUIRED)
     find_package(sdl3webgpu REQUIRED)
-    target_link_libraries(thorin_webgpu PUBLIC thorin dawn::webgpu_dawn PRIVATE sdl3webgpu::sdl3webgpu)
+    target_link_libraries(ironcast_webgpu PUBLIC ironcast dawn::webgpu_dawn PRIVATE sdl3webgpu::sdl3webgpu)
     # Backend::init() blocks in WaitAny() for the adapter and device; in the browser that needs JSPI.
     if(EMSCRIPTEN)
-        target_link_options(thorin_webgpu PUBLIC -sJSPI)
+        target_link_options(ironcast_webgpu PUBLIC -sJSPI)
     endif()
 endif()
 
-# Vulkan 1.3 backend, in thorin::vulkan; native only. Vulkan is loaded at runtime through SDL, so the Vulkan
+# Vulkan 1.3 backend, in ironcast::vulkan; native only. Vulkan is loaded at runtime through SDL, so the Vulkan
 # loader isn't linked.
-cmake_dependent_option(THORIN_VULKAN "Build the Vulkan backend" ON "NOT EMSCRIPTEN" OFF)
-if(THORIN_VULKAN)
+cmake_dependent_option(IRONCAST_VULKAN "Build the Vulkan backend" ON "NOT EMSCRIPTEN" OFF)
+if(IRONCAST_VULKAN)
     add_library(
-        thorin_vulkan
+        ironcast_vulkan
         STATIC
-        ${THORIN_SOURCE_DIR}/vulkan/backend.cpp
-        ${THORIN_SOURCE_DIR}/vulkan/vma.cpp
+        ${IRONCAST_SOURCE_DIR}/vulkan/backend.cpp
+        ${IRONCAST_SOURCE_DIR}/vulkan/vma.cpp
     )
-    add_library(thorin::vulkan ALIAS thorin_vulkan)
-    set_target_properties(thorin_vulkan PROPERTIES EXPORT_NAME vulkan)
+    add_library(ironcast::vulkan ALIAS ironcast_vulkan)
+    set_target_properties(ironcast_vulkan PROPERTIES EXPORT_NAME vulkan)
     find_package(VulkanHeaders REQUIRED)
     find_package(VulkanMemoryAllocator REQUIRED)
     find_package(vk-bootstrap REQUIRED)
     target_link_libraries(
-        thorin_vulkan
-        PUBLIC thorin vulkan-headers::vulkan-headers GPUOpen::VulkanMemoryAllocator
+        ironcast_vulkan
+        PUBLIC ironcast vulkan-headers::vulkan-headers GPUOpen::VulkanMemoryAllocator
         PRIVATE vk-bootstrap::vk-bootstrap
     )
     # No prototypes: functions come through SDL's vkGetInstanceProcAddr (imgui is built the same way), so
     # Vulkan-Hpp's own loader is off too. Vulkan-Hpp returns OutOfDate from acquire and present instead of
     # throwing, as the frame loop expects it.
     target_compile_definitions(
-        thorin_vulkan
+        ironcast_vulkan
         PUBLIC VK_NO_PROTOTYPES VULKAN_HPP_ENABLE_DYNAMIC_LOADER_TOOL=0 VULKAN_HPP_HANDLE_ERROR_OUT_OF_DATE_AS_SUCCESS
     )
 endif()
 
-if(NOT THORIN_OPENGL AND NOT THORIN_SDLGPU AND NOT THORIN_WEBGPU AND NOT THORIN_VULKAN)
-    message(STATUS "thorin: no real backend built (THORIN_OPENGL, THORIN_SDLGPU, THORIN_WEBGPU and THORIN_VULKAN are off); only NullBackend, which draws nothing")
+if(NOT IRONCAST_OPENGL AND NOT IRONCAST_SDLGPU AND NOT IRONCAST_WEBGPU AND NOT IRONCAST_VULKAN)
+    message(STATUS "ironcast: no real backend built (IRONCAST_OPENGL, IRONCAST_SDLGPU, IRONCAST_WEBGPU and IRONCAST_VULKAN are off); only NullBackend, which draws nothing")
 endif()
 
-# Optional widgets on top of thorin: ChartWidget and Chart3DWidget (ImPlot / ImPlot3D).
-option(THORIN_EXTRAS "Build the extras library" ON)
-if(THORIN_EXTRAS)
+# Optional widgets on top of ironcast: ChartWidget and Chart3DWidget (ImPlot / ImPlot3D).
+option(IRONCAST_EXTRAS "Build the extras library" ON)
+if(IRONCAST_EXTRAS)
     add_library(
-        thorin_extras
+        ironcast_extras
         STATIC
-        ${THORIN_SOURCE_DIR}/extras/charttheme.cpp
-        ${THORIN_SOURCE_DIR}/extras/series.cpp
-        ${THORIN_SOURCE_DIR}/extras/chartwidget.cpp
-        ${THORIN_SOURCE_DIR}/extras/series3d.cpp
-        ${THORIN_SOURCE_DIR}/extras/chart3dwidget.cpp
+        ${IRONCAST_SOURCE_DIR}/extras/charttheme.cpp
+        ${IRONCAST_SOURCE_DIR}/extras/series.cpp
+        ${IRONCAST_SOURCE_DIR}/extras/chartwidget.cpp
+        ${IRONCAST_SOURCE_DIR}/extras/series3d.cpp
+        ${IRONCAST_SOURCE_DIR}/extras/chart3dwidget.cpp
     )
-    add_library(thorin::extras ALIAS thorin_extras)
-    set_target_properties(thorin_extras PROPERTIES EXPORT_NAME extras)
+    add_library(ironcast::extras ALIAS ironcast_extras)
+    set_target_properties(ironcast_extras PROPERTIES EXPORT_NAME extras)
     find_package(implot REQUIRED)
     find_package(implot3d REQUIRED)
-    target_link_libraries(thorin_extras PUBLIC thorin implot::implot implot3d::implot3d)
+    target_link_libraries(ironcast_extras PUBLIC ironcast implot::implot implot3d::implot3d)
 endif()
 
 # Inter, JetBrains Mono and Noto Sans (OFL, see fonts/*/OFL.txt) compiled in as Font::inter() etc.
-option(THORIN_BUNDLE_FONTS "Embed the fonts in fonts/ (~1.3 MB)" ON)
-if(THORIN_BUNDLE_FONTS)
+option(IRONCAST_BUNDLE_FONTS "Embed the fonts in fonts/ (~1.3 MB)" ON)
+if(IRONCAST_BUNDLE_FONTS)
     foreach(font IN ITEMS
         "inter|inter/Inter-Regular.ttf"
         "jetbrains_mono|jetbrains-mono/JetBrainsMono-Regular.ttf"
@@ -219,87 +219,87 @@ if(THORIN_BUNDLE_FONTS)
             DEPENDS ${input} ${PROJECT_SOURCE_DIR}/cmake/embed.cmake
             COMMENT "Embedding font ${file}"
         )
-        target_sources(thorin PRIVATE ${output})
+        target_sources(ironcast PRIVATE ${output})
     endforeach()
-    target_compile_definitions(thorin PUBLIC THORIN_BUNDLE_FONTS)
+    target_compile_definitions(ironcast PUBLIC IRONCAST_BUNDLE_FONTS)
 endif()
 
 # Widget inspector overlay, opened with F12 or Window::set_inspector(). Turn off for shipped apps.
-option(THORIN_INSPECTOR "Build the widget inspector overlay" ON)
-if(THORIN_INSPECTOR)
-    target_sources(thorin PRIVATE ${THORIN_SOURCE_DIR}/inspector.cpp)
-    target_compile_definitions(thorin PRIVATE THORIN_INSPECTOR)
+option(IRONCAST_INSPECTOR "Build the widget inspector overlay" ON)
+if(IRONCAST_INSPECTOR)
+    target_sources(ironcast PRIVATE ${IRONCAST_SOURCE_DIR}/inspector.cpp)
+    target_compile_definitions(ironcast PRIVATE IRONCAST_INSPECTOR)
 endif()
 
 configure_file(
-    ${THORIN_HEADER_DIR}/thorin/version.hpp.in
-    ${CMAKE_CURRENT_BINARY_DIR}/include/thorin/version.hpp
+    ${IRONCAST_HEADER_DIR}/ironcast/version.hpp.in
+    ${CMAKE_CURRENT_BINARY_DIR}/include/ironcast/version.hpp
     @ONLY
 )
 target_include_directories(
-    thorin
+    ironcast
     PUBLIC
-    $<BUILD_INTERFACE:${THORIN_HEADER_DIR}>
+    $<BUILD_INTERFACE:${IRONCAST_HEADER_DIR}>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-# CMake package: find_package(thorin) and link a backend, thorin::opengl or thorin::sdlgpu (both bring in
-# thorin::thorin). Usable from the build tree (thorin_DIR = this build directory) or after cmake --install
+# CMake package: find_package(ironcast) and link a backend, ironcast::opengl or ironcast::sdlgpu (both bring in
+# ironcast::ironcast). Usable from the build tree (ironcast_DIR = this build directory) or after cmake --install
 # (CMAKE_PREFIX_PATH = the install prefix). The app has to provide the same dependencies, e.g. through the
 # same Conan toolchain.
 include(CMakePackageConfigHelpers)
-install(TARGETS thorin EXPORT thorinTargets)
-if(THORIN_OPENGL)
-    install(TARGETS thorin_opengl EXPORT thorinTargets)
+install(TARGETS ironcast EXPORT ironcastTargets)
+if(IRONCAST_OPENGL)
+    install(TARGETS ironcast_opengl EXPORT ironcastTargets)
 endif()
-if(THORIN_SDLGPU)
-    install(TARGETS thorin_sdlgpu EXPORT thorinTargets)
+if(IRONCAST_SDLGPU)
+    install(TARGETS ironcast_sdlgpu EXPORT ironcastTargets)
 endif()
-if(THORIN_EXTRAS)
-    install(TARGETS thorin_extras EXPORT thorinTargets)
+if(IRONCAST_EXTRAS)
+    install(TARGETS ironcast_extras EXPORT ironcastTargets)
 endif()
-if(NOT THORIN_OPENGL)
-    list(APPEND THORIN_INSTALL_EXCLUDE PATTERN "opengl" EXCLUDE)
+if(NOT IRONCAST_OPENGL)
+    list(APPEND IRONCAST_INSTALL_EXCLUDE PATTERN "opengl" EXCLUDE)
 endif()
-if(NOT THORIN_SDLGPU)
-    list(APPEND THORIN_INSTALL_EXCLUDE PATTERN "sdlgpu" EXCLUDE)
+if(NOT IRONCAST_SDLGPU)
+    list(APPEND IRONCAST_INSTALL_EXCLUDE PATTERN "sdlgpu" EXCLUDE)
 endif()
-if(NOT THORIN_EXTRAS)
-    list(APPEND THORIN_INSTALL_EXCLUDE PATTERN "extras" EXCLUDE)
+if(NOT IRONCAST_EXTRAS)
+    list(APPEND IRONCAST_INSTALL_EXCLUDE PATTERN "extras" EXCLUDE)
 endif()
 install(
-    DIRECTORY ${THORIN_HEADER_DIR}
+    DIRECTORY ${IRONCAST_HEADER_DIR}
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     FILES_MATCHING PATTERN "*.hpp"
-    ${THORIN_INSTALL_EXCLUDE}
+    ${IRONCAST_INSTALL_EXCLUDE}
 )
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/include/thorin/version.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/thorin)
-install(EXPORT thorinTargets NAMESPACE thorin:: DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/thorin)
-export(EXPORT thorinTargets NAMESPACE thorin:: FILE ${CMAKE_CURRENT_BINARY_DIR}/thorinTargets.cmake)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/include/ironcast/version.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ironcast)
+install(EXPORT ironcastTargets NAMESPACE ironcast:: DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/ironcast)
+export(EXPORT ironcastTargets NAMESPACE ironcast:: FILE ${CMAKE_CURRENT_BINARY_DIR}/ironcastTargets.cmake)
 configure_package_config_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/thorinConfig.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/thorinConfig.cmake
-    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/thorin
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/ironcastConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/ironcastConfig.cmake
+    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/ironcast
 )
 # 0.x: minor versions may break the API, so only the same minor version matches.
 write_basic_package_version_file(
-    ${CMAKE_CURRENT_BINARY_DIR}/thorinConfigVersion.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/ironcastConfigVersion.cmake
     COMPATIBILITY SameMinorVersion
 )
 install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/thorinConfig.cmake ${CMAKE_CURRENT_BINARY_DIR}/thorinConfigVersion.cmake
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/thorin
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/ironcastConfig.cmake ${CMAKE_CURRENT_BINARY_DIR}/ironcastConfigVersion.cmake
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/ironcast
 )
-# Examples and tests only build by default when thorin is the top-level project, not when an app pulls
+# Examples and tests only build by default when ironcast is the top-level project, not when an app pulls
 # it in with add_subdirectory().
-option(THORIN_BUILD_EXAMPLES "Build the examples" ${PROJECT_IS_TOP_LEVEL})
-if(THORIN_BUILD_EXAMPLES)
-    add_subdirectory(${THORIN_EXAMPLES_DIR})
+option(IRONCAST_BUILD_EXAMPLES "Build the examples" ${PROJECT_IS_TOP_LEVEL})
+if(IRONCAST_BUILD_EXAMPLES)
+    add_subdirectory(${IRONCAST_EXAMPLES_DIR})
 endif()
 
-option(THORIN_BUILD_TESTS "Build the headless tests" ${PROJECT_IS_TOP_LEVEL})
-if(THORIN_BUILD_TESTS)
+option(IRONCAST_BUILD_TESTS "Build the headless tests" ${PROJECT_IS_TOP_LEVEL})
+if(IRONCAST_BUILD_TESTS)
     enable_testing()
     add_subdirectory(${PROJECT_SOURCE_DIR}/tests)
 endif()

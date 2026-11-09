@@ -4,7 +4,7 @@ include(GoogleTest)
 # One executable per test file, each registered with CTest. Add new test files to this list.
 # Headless: no window or GL context, only an ImGui context with a font atlas.
 set(
-    THORIN_TESTS
+    IRONCAST_TESTS
     measure_test
     color_test
     series_test
@@ -12,9 +12,9 @@ set(
     container_test
 )
 
-foreach(test ${THORIN_TESTS})
+foreach(test ${IRONCAST_TESTS})
     add_executable(${test} ${test}.cpp)
-    target_link_libraries(${test} PRIVATE thorin GTest::gtest_main)
+    target_link_libraries(${test} PRIVATE ironcast GTest::gtest_main)
     # Windows has no rpath: copy DLLs (SDL3) next to the test. Before gtest_discover_tests, which
     # runs the test right after linking.
     if(WIN32)
@@ -26,4 +26,4 @@ foreach(test ${THORIN_TESTS})
     endif()
     gtest_discover_tests(${test})
 endforeach()
-target_link_libraries(series_test PRIVATE thorin::extras)
+target_link_libraries(series_test PRIVATE ironcast::extras)

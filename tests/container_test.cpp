@@ -2,10 +2,10 @@
 
 #include <gtest/gtest.h>
 
-#include <thorin/container.hpp>
-#include <thorin/widget.hpp>
+#include <ironcast/container.hpp>
+#include <ironcast/widget.hpp>
 
-using namespace thorin;
+using namespace ironcast;
 
 namespace {
     struct Counted : Widget {

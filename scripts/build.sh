@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Builds thorin with a compiler whose dependencies submodules/conanfiles/install.py has deployed.
+# Builds ironcast with a compiler whose dependencies submodules/conanfiles/install.py has deployed.
 # Usage: scripts/build.sh <gcc|clang|emscripten> [--debug] [--release]
 # Builds debug when neither is given, both when both are. Output goes to build/<compiler>-<type>.
 set -euo pipefail

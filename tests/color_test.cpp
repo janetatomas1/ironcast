@@ -6,10 +6,10 @@
 #include <optional>
 #include <string_view>
 
-#include <thorin/color.hpp>
+#include <ironcast/color.hpp>
 
-using namespace thorin;
-using namespace thorin::literals;
+using namespace ironcast;
+using namespace ironcast::literals;
 
 namespace {
     // One 8-bit step is 1/255; HSV/HSL go through float maths.

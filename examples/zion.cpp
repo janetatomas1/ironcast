@@ -28,26 +28,26 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
-#include <thorin/thorin.hpp>
-#include <thorin/tabwidget.hpp>
-#include <thorin/pane.hpp>
-#include <thorin/theme.hpp>
-#include <thorin/window.hpp>
-#include <thorin/font.hpp>
-#include <thorin/image.hpp>
-#include <thorin/dockarea.hpp>
-#include <thorin/table.hpp>
-#include <thorin/button.hpp>
-#include <thorin/checkbox.hpp>
-#include <thorin/dropdown.hpp>
-#include <thorin/extras/chartwidget.hpp>
-#include <thorin/text.hpp>
-#include <thorin/textinput.hpp>
-#include <thorin/logwidget.hpp>
+#include <ironcast/ironcast.hpp>
+#include <ironcast/tabwidget.hpp>
+#include <ironcast/pane.hpp>
+#include <ironcast/theme.hpp>
+#include <ironcast/window.hpp>
+#include <ironcast/font.hpp>
+#include <ironcast/image.hpp>
+#include <ironcast/dockarea.hpp>
+#include <ironcast/table.hpp>
+#include <ironcast/button.hpp>
+#include <ironcast/checkbox.hpp>
+#include <ironcast/dropdown.hpp>
+#include <ironcast/extras/chartwidget.hpp>
+#include <ironcast/text.hpp>
+#include <ironcast/textinput.hpp>
+#include <ironcast/logwidget.hpp>
 
-#include "thorin/sdlgpu/backend.hpp"
+#include "ironcast/sdlgpu/backend.hpp"
 
-using namespace thorin;
+using namespace ironcast;
 using namespace literals;
 
 constexpr char glyphs[] = "0123456789ABCDEFXYZ:.=*+-<>|$#@";
@@ -158,8 +158,8 @@ void MatrixRain::operator()(ImDrawList& list, ImVec2 min, ImVec2 max) {
         }
     }
 
-    if (Thorin::has_current()) {
-        Thorin::current().request_redraw();
+    if (Ironcast::has_current()) {
+        Ironcast::current().request_redraw();
     }
 }
 
@@ -1345,7 +1345,7 @@ struct Root : public DockArea {
 };
 
 int main(const int argc, char** argv) {
-    auto app = Thorin(argc, argv);
+    auto app = Ironcast(argc, argv);
 
     Theme theme = Theme::matrix();
     theme.font = &Font::jetbrains_mono();
@@ -1359,7 +1359,7 @@ int main(const int argc, char** argv) {
        return std::make_unique<sdlgpu::Backend>(config);
     });
 
-    if (auto icon = Image::from_file(THORIN_EXAMPLES_ASSETS "/zion-icon.png")) {
+    if (auto icon = Image::from_file(IRONCAST_EXAMPLES_ASSETS "/zion-icon.png")) {
         app.set_icon(&app.add_image(std::move(*icon)));
     }
 

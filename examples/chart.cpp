@@ -1,11 +1,11 @@
 #include <cmath>
 #include <string>
 
-#include <thorin/thorin.hpp>
-#include <thorin/vulkan/backend.hpp>
-#include <thorin/extras/chartwidget.hpp>
+#include <ironcast/ironcast.hpp>
+#include <ironcast/vulkan/backend.hpp>
+#include <ironcast/extras/chartwidget.hpp>
 
-using namespace thorin;
+using namespace ironcast;
 
 // Chart: sine and cosine sampled every frame, scrolling through the last 10 seconds
 // in a ChartWidget that fills the window. Rings keep the last capacity samples, enough for
@@ -42,7 +42,7 @@ struct Chart: Widget {
 };
 
 int main(const int argc, char** argv) {
-    auto app = Thorin(argc, argv);
+    auto app = Ironcast(argc, argv);
 
     app.set_backend_factory([](const WindowConfig& config) {
         return std::make_unique<vulkan::Backend>(config);

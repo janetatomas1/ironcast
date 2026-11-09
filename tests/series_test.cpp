@@ -5,9 +5,9 @@
 #include <span>
 #include <vector>
 
-#include <thorin/extras/series.hpp>
+#include <ironcast/extras/series.hpp>
 
-using namespace thorin;
+using namespace ironcast;
 
 namespace {
     std::vector<double> to_vector(std::span<const double> values) {

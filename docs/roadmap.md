@@ -7,7 +7,7 @@ earlier `Styled<W, S...>` design that was replaced by `Style` (see below).
 
 ## Next
 
-Before writing a real app with thorin, in this order:
+Before writing a real app with ironcast, in this order:
 
 1. **Inspector: style view and picking** (see [Inspector](#inspector-done)).
 
@@ -44,7 +44,7 @@ Start with read-only discovery and checks on images, then add repair.
 - **Headless measure tests.** `tests/measure_test.cpp` (GoogleTest, `ctest`) creates an
   ImGui context with no window, lays each widget out and compares Yoga's box with
   `GetItemRectSize()`. Covers every leaf and the main flag variants, including the
-  ColorPicker, plus explicit boxes on frame widgets. Build with `-DTHORIN_BUILD_TESTS=OFF`
+  ColorPicker, plus explicit boxes on frame widgets. Build with `-DIRONCAST_BUILD_TESTS=OFF`
   to skip.
 - **RadioGroup's `&selected_` pointer.** `RadioGroup`'s move operations re-point every
   option at the new group's `selected_`.
@@ -118,20 +118,20 @@ Every widget owns a `Style` (`Widget::style()`), holding only the values that we
   entry's own style around it. Each entry has an entry owner (`Widget::set_entry_owner()`, an id,
   set when it is added): marking the entry dirty (title, style) marks its owner too, through a
   submenu up to the bar.
-- **App-wide theme.** `Thorin::set_theme(Theme)` (`ImGuiStyle`, `ImPlotStyle`, `ImPlot3DStyle`, unscaled)
+- **App-wide theme.** `Ironcast::set_theme(Theme)` (`ImGuiStyle`, `ImPlotStyle`, `ImPlot3DStyle`, unscaled)
   is copied into each window's contexts in `opengl::Backend::init()`, then DPI-scaled. Setting it later
   re-themes open windows through an action (between frames) and marks their trees dirty.
   `Theme::font` (`const Font*`, bytes loaded without an ImGui context) is borrowed by each window's atlas
-  (`FontDataOwnedByAtlas = false`). Fonts loaded at runtime are owned by the app (`Thorin::add_font`, a
+  (`FontDataOwnedByAtlas = false`). Fonts loaded at runtime are owned by the app (`Ironcast::add_font`, a
   `std::vector<std::unique_ptr<Font>>` destroyed after the windows); `remove_font` frees one on the next
   frame, after any pending re-theme has dropped it from the atlases (`RemoveFont` stops reading the bytes).
   `Font::inter()`, `jetbrains_mono()`, `noto_sans()` view the TTFs in `fonts/` (OFL), turned into static byte
-  arrays by `cmake/embed.cmake`; `THORIN_BUNDLE_FONTS=OFF` leaves them out.
+  arrays by `cmake/embed.cmake`; `IRONCAST_BUNDLE_FONTS=OFF` leaves them out.
 - **Window background image.** `Image` holds RGBA pixels decoded by stb_image (no GL context needed), owned
-  by the app (`Thorin::add_image` / `remove_image`). `Window::set_background(const Image*)` makes that window's
+  by the app (`Ironcast::add_image` / `remove_image`). `Window::set_background(const Image*)` makes that window's
   backend upload its own texture on the next frame and draw it stretched into the root window's draw list,
   above `WindowBg` and below every widget.
-  `Thorin::set_background(image, opacity)` is the default: `Window::init()` takes it unless the window already
+  `Ironcast::set_background(image, opacity)` is the default: `Window::init()` takes it unless the window already
   has one.
 
 ## New widgets
@@ -221,7 +221,7 @@ Implemented with one `FramePolicy` per mode instead of the `Continuous` field co
 `TargetFps`, `FixedDelay` (`delayMs`), `Uncapped`, `OnDemand`, `DisplayMatched`, `FocusBased`
 (`idleFps` while unfocused) and `Adaptive` (`idleFps` after `activeTimeoutMs` without activity), dispatched
 through a wait-function table indexed by the enum (`windowmanager.cpp`). `FrameConfig` and the
-redraw counter live in `WindowManager`; `Thorin::set_frame_config` and `Thorin::request_redraw`
+redraw counter live in `WindowManager`; `Ironcast::set_frame_config` and `Ironcast::request_redraw`
 forward to it. There is no vsync and no `swapInterval`: every window swaps with interval 0, and
 `DisplayMatched` sleeps to the fastest refresh rate among the windows' displays, so waits don't
 stack per window. `add_action` pushes a registered wake event. `opengl::RenderWidget::render_texture()` requests a
@@ -260,7 +260,7 @@ int swapInterval = 0;           // 1 = vsync, 0 = off, -1 = adaptive (fall back 
 
 ### Redraw requests
 
-`Thorin::request_redraw(int frames = 2)` keeps an OnDemand loop drawing for that many frames.
+`Ironcast::request_redraw(int frames = 2)` keeps an OnDemand loop drawing for that many frames.
 Every SDL event requests a redraw (ImGui needs a frame or two to settle hover and layout), and
 an animating widget (e.g. `opengl::RenderWidget`) requests one from its `render_texture()` every frame it is
 drawn.
@@ -280,7 +280,7 @@ Later: skip `update()` for minimized or occluded windows (`SDL_WINDOW_MINIMIZED`
 ### Inspector (done)
 
 A devtools-like window per `Window`, toggled with F12 or `Window::set_inspector()`. Built with
-`THORIN_INSPECTOR` (on by default); without it both do nothing.
+`IRONCAST_INSPECTOR` (on by default); without it both do nothing.
 
 - The widget tree, walked through the Yoga tree, with each widget's demangled type, title and id.
   The selected and hovered widgets are kept by id, so a destroyed widget just drops out.
@@ -297,17 +297,17 @@ Still open:
 
 ## App services (done)
 
-- **Logging.** spdlog-based, configured with `Thorin::set_log_config(LogConfig)`: console, a
+- **Logging.** spdlog-based, configured with `Ironcast::set_log_config(LogConfig)`: console, a
   rotating file and an in-memory buffer (`memoryCapacity`, read through `log_memory()`). The
-  framework's `"thorin"` logger has its own level; `make_logger(name)` makes app loggers sharing
+  framework's `"ironcast"` logger has its own level; `make_logger(name)` makes app loggers sharing
   the same sinks. `LogWidget` shows the buffer with a level filter, a text filter, Clear and Copy,
   and follows new messages while scrolled to the bottom.
-- **Clipboard.** `thorin::clipboard::set_text()`, `text()`, `has_text()`, shared with ImGui's text
+- **Clipboard.** `ironcast::clipboard::set_text()`, `text()`, `has_text()`, shared with ImGui's text
   inputs.
-- **Window icon.** `Thorin::set_icon(const Image*)` is the default for every window,
+- **Window icon.** `Ironcast::set_icon(const Image*)` is the default for every window,
   `Window::set_icon()` overrides it for one.
 
 ## Tests
 
-`tests/` (GoogleTest, `ctest`, `THORIN_BUILD_TESTS`): measuring, colour parsing, `Series` and
+`tests/` (GoogleTest, `ctest`, `IRONCAST_BUILD_TESTS`): measuring, colour parsing, `Series` and
 `ActionManager`. Still uncovered: `Style` push/pop and inheritance, frame policies, logging.
