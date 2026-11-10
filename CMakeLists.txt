@@ -135,6 +135,7 @@ if(IRONCAST_WEBGPU)
         ironcast_webgpu
         STATIC
         ${IRONCAST_SOURCE_DIR}/webgpu/backend.cpp
+        ${IRONCAST_SOURCE_DIR}/webgpu/renderwidget.cpp
     )
     add_library(ironcast::webgpu ALIAS ironcast_webgpu)
     set_target_properties(ironcast_webgpu PROPERTIES EXPORT_NAME webgpu)
@@ -244,8 +245,8 @@ target_include_directories(
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-# CMake package: find_package(ironcast) and link a backend, ironcast::opengl or ironcast::sdlgpu (both bring in
-# ironcast::ironcast). Usable from the build tree (ironcast_DIR = this build directory) or after cmake --install
+# CMake package: find_package(ironcast) and link a backend, ironcast::opengl, ironcast::sdlgpu, ironcast::webgpu
+# or ironcast::vulkan (each brings in ironcast::ironcast). Usable from the build tree (ironcast_DIR = this build directory) or after cmake --install
 # (CMAKE_PREFIX_PATH = the install prefix). The app has to provide the same dependencies, e.g. through the
 # same Conan toolchain.
 include(CMakePackageConfigHelpers)
@@ -256,6 +257,12 @@ endif()
 if(IRONCAST_SDLGPU)
     install(TARGETS ironcast_sdlgpu EXPORT ironcastTargets)
 endif()
+if(IRONCAST_WEBGPU)
+    install(TARGETS ironcast_webgpu EXPORT ironcastTargets)
+endif()
+if(IRONCAST_VULKAN)
+    install(TARGETS ironcast_vulkan EXPORT ironcastTargets)
+endif()
 if(IRONCAST_EXTRAS)
     install(TARGETS ironcast_extras EXPORT ironcastTargets)
 endif()
@@ -264,6 +271,12 @@ if(NOT IRONCAST_OPENGL)
 endif()
 if(NOT IRONCAST_SDLGPU)
     list(APPEND IRONCAST_INSTALL_EXCLUDE PATTERN "sdlgpu" EXCLUDE)
+endif()
+if(NOT IRONCAST_WEBGPU)
+    list(APPEND IRONCAST_INSTALL_EXCLUDE PATTERN "webgpu" EXCLUDE)
+endif()
+if(NOT IRONCAST_VULKAN)
+    list(APPEND IRONCAST_INSTALL_EXCLUDE PATTERN "vulkan" EXCLUDE)
 endif()
 if(NOT IRONCAST_EXTRAS)
     list(APPEND IRONCAST_INSTALL_EXCLUDE PATTERN "extras" EXCLUDE)
