@@ -238,6 +238,11 @@ namespace ironcast::webgpu {
         return static_cast<ImTextureID>(reinterpret_cast<intptr_t>(backgroundView_.Get()));
     }
 
+    const wgpu::Device& Backend::device() const {
+        IRONCAST_DEBUG_ASSERT(shared_ != nullptr, "webgpu::Backend::device called before init");
+        return shared_->device;
+    }
+
     wgpu::Texture Backend::upload_texture(const Image& image) {
         IRONCAST_DEBUG_ASSERT(shared_ != nullptr, "webgpu::Backend::upload_texture called before init");
 

@@ -38,6 +38,8 @@ namespace ironcast::webgpu {
         void update(Widget *rootWidget) override;
         void destroy() override;
         ImTextureID upload_background() override;
+        // Shared by every window this backend type makes. Call it after init().
+        [[nodiscard]] const wgpu::Device& device() const;
         // A new RGBA8Unorm texture with TextureBinding usage holding image's pixels. The upload is queued before
         // this returns; failures go to the uncaptured-error log.
         [[nodiscard]] wgpu::Texture upload_texture(const Image& image);
