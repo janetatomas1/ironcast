@@ -5,7 +5,29 @@ and versions follow [Semantic Versioning](https://semver.org); while the version
 versions may break the API. The version itself is set in `project()` in `CMakeLists.txt` and
 exposed as `IRONCAST_VERSION` in `ironcast/version.hpp`. Plans live in [docs/roadmap.md](docs/roadmap.md).
 
-## [Unreleased]
+## [0.4.0] - 2026-11-10
+
+### Added
+
+- `webgpu::Backend` (`ironcast::webgpu` library, `IRONCAST_WEBGPU`, ON by default): WebGPU through Dawn
+  natively and the browser's WebGPU on Emscripten, with one device shared by all windows, background
+  images, `device()` and `upload_texture(image)`.
+- `vulkan::Backend` (`ironcast::vulkan` library, `IRONCAST_VULKAN`, ON except on Emscripten): Vulkan 1.3
+  with dynamic rendering, built on Vulkan-Hpp RAII, vk-bootstrap and VMA. Vulkan is loaded through SDL, so
+  the loader isn't linked. One device is shared by all windows, with background images and
+  `shared_device()`.
+- `webgpu::RenderWidget` and `vulkan::RenderWidget`: like `sdlgpu::RenderWidget`, a render callback into
+  the widget's own texture, with clear colour, auto-size, an optional depth texture and mouse capture.
+  The Vulkan one owns its image (`set_texture(width, height, format)`) and renders inside dynamic
+  rendering; resizing it waits for the GPU to go idle.
+- `ironcast/vulkan/device.hpp`: the Vulkan backend's shared device and helpers, for extending it. It
+  pulls in Vulkan-Hpp, VMA and vk-bootstrap, so the other headers don't include it.
+- `cmake --install` and `find_package(ironcast)` cover `ironcast::webgpu` and `ironcast::vulkan`.
+- `opengl::RenderWidget` and `sdlgpu::RenderWidget`: with a render callback and no texture, `init()`
+  creates an RGBA8 texture and turns `auto_size()` on.
+- `scripts/install.sh` / `install.ps1` install the Conan dependencies for a compiler and build type;
+  `scripts/build.sh` / `build.ps1` build with them.
+- `hello` example: one centred button, the example in the new `README.md`.
 
 ### Changed
 
@@ -13,6 +35,13 @@ exposed as `IRONCAST_VERSION` in `ironcast/version.hpp`. Plans live in [docs/roa
   `Ironcast` app class (`ironcast/ironcast.hpp`, was `Thorin` in `thorin/thorin.hpp`), the
   `ironcast::ironcast` / `ironcast::opengl` / ... CMake targets and `find_package(ironcast)`, and the
   `IRONCAST_*` options and macros.
+- The `chart` example uses the Vulkan backend.
+
+### Fixed
+
+- MSVC: `/Zc:preprocessor` is set on `ironcast::ironcast` (public), as libassert's macros need the
+  conforming preprocessor.
+- Windows: examples and tests copy the SDL3 DLL next to the executable.
 
 ## [0.3.0] - 2026-10-27
 

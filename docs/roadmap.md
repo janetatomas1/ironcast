@@ -41,7 +41,7 @@ Start with read-only discovery and checks on images, then add repair.
   (`Widget::push_frame_height`). Frame-height squares (combo arrow, colour swatch) are
   measured with the exact height too (`Widget::frame_height`). The hard-coded heights are
   gone from the examples.
-- **Headless measure tests.** `tests/measure_test.cpp` (GoogleTest, `ctest`) creates an
+- **Headless measure tests.** `tests/unit/measure_test.cpp` (GoogleTest, `ctest`) creates an
   ImGui context with no window, lays each widget out and compares Yoga's box with
   `GetItemRectSize()`. Covers every leaf and the main flag variants, including the
   ColorPicker, plus explicit boxes on frame widgets. Build with `-DIRONCAST_BUILD_TESTS=OFF`
@@ -309,5 +309,5 @@ Still open:
 
 ## Tests
 
-`tests/` (GoogleTest, `ctest`, `IRONCAST_BUILD_TESTS`): measuring, colour parsing, `Series` and
+`tests/unit/` (GoogleTest, `ctest`, `IRONCAST_BUILD_TESTS`): measuring, colour parsing, `Series` and
 `ActionManager`. Still uncovered: `Style` push/pop and inheritance, frame policies, logging.

@@ -271,5 +271,5 @@ is unsupported, because nothing marks the nodes dirty.
 3. ~~The remaining leaf widgets.~~ Done: Button, Checkbox, RadioButton, Slider, Drag, Input,
    TextInput, Dropdown, Text, ColorEdit, and the new ColorPicker.
 4. ~~Explicit heights on frame widgets (`FramePadding` push); remove the hard-coded
-   `.height(24.0f)` from the examples.~~ Done, with headless tests in `tests/`.
+   `.height(24.0f)` from the examples.~~ Done, with headless tests in `tests/unit/`.
 5. `Styled` / `Font`, `Window::set_style`, templated `RadioGroup` (separate change).

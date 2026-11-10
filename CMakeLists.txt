@@ -1,6 +1,6 @@
 
 cmake_minimum_required(VERSION 3.28)
-project(ironcast VERSION 0.3.0)
+project(ironcast VERSION 0.4.0)
 
 set(CMAKE_CXX_STANDARD 23)
 
