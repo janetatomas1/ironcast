@@ -36,6 +36,9 @@ exposed as `IRONCAST_VERSION` in `ironcast/version.hpp`. Plans live in [docs/roa
   `ironcast::ironcast` / `ironcast::opengl` / ... CMake targets and `find_package(ironcast)`, and the
   `IRONCAST_*` options and macros.
 - The `chart` example uses the Vulkan backend.
+- Tests moved to `tests/unit/`, and `IRONCAST_BUILD_TESTS` is now `IRONCAST_UNIT_TESTS`. `IRONCAST_GUI_TESTS`
+  (off by default) is reserved for Dear ImGui Test Engine tests in `tests/gui/`, which need imgui built with
+  the test engine.
 
 ### Fixed
 

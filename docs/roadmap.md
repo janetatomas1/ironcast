@@ -44,7 +44,7 @@ Start with read-only discovery and checks on images, then add repair.
 - **Headless measure tests.** `tests/unit/measure_test.cpp` (GoogleTest, `ctest`) creates an
   ImGui context with no window, lays each widget out and compares Yoga's box with
   `GetItemRectSize()`. Covers every leaf and the main flag variants, including the
-  ColorPicker, plus explicit boxes on frame widgets. Build with `-DIRONCAST_BUILD_TESTS=OFF`
+  ColorPicker, plus explicit boxes on frame widgets. Build with `-DIRONCAST_UNIT_TESTS=OFF`
   to skip.
 - **RadioGroup's `&selected_` pointer.** `RadioGroup`'s move operations re-point every
   option at the new group's `selected_`.
@@ -309,5 +309,5 @@ Still open:
 
 ## Tests
 
-`tests/unit/` (GoogleTest, `ctest`, `IRONCAST_BUILD_TESTS`): measuring, colour parsing, `Series` and
+`tests/unit/` (GoogleTest, `ctest`, `IRONCAST_UNIT_TESTS`): measuring, colour parsing, `Series` and
 `ActionManager`. Still uncovered: `Style` push/pop and inheritance, frame policies, logging.

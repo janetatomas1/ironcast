@@ -72,8 +72,9 @@ the `PATH`.
 On Windows, use `scripts\install.ps1` and `scripts\build.ps1` with `msvc` or `clang-cl`.
 
 CMake options, all on by default: `IRONCAST_OPENGL`, `IRONCAST_SDLGPU`, `IRONCAST_WEBGPU`, `IRONCAST_VULKAN`,
-`IRONCAST_EXTRAS`, `IRONCAST_BUNDLE_FONTS`, `IRONCAST_INSPECTOR`. Examples and tests build when ironcast is
-the top-level project (`IRONCAST_BUILD_EXAMPLES`, `IRONCAST_BUILD_TESTS`).
+`IRONCAST_EXTRAS`, `IRONCAST_BUNDLE_FONTS`, `IRONCAST_INSPECTOR`. Examples and unit tests build when ironcast is
+the top-level project (`IRONCAST_BUILD_EXAMPLES`, `IRONCAST_UNIT_TESTS`). The GUI tests (`IRONCAST_GUI_TESTS`) are
+off by default: they need imgui built with Dear ImGui Test Engine.
 
 ## Using it in a project
 

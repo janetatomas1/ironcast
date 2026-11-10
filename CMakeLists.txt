@@ -311,8 +311,10 @@ if(IRONCAST_BUILD_EXAMPLES)
     add_subdirectory(${IRONCAST_EXAMPLES_DIR})
 endif()
 
-option(IRONCAST_BUILD_TESTS "Build the headless tests" ${PROJECT_IS_TOP_LEVEL})
-if(IRONCAST_BUILD_TESTS)
+option(IRONCAST_UNIT_TESTS "Build the unit tests (tests/unit, GoogleTest)" ${PROJECT_IS_TOP_LEVEL})
+# Off by default: imgui has to be built with Dear ImGui Test Engine (Conan: ironcast:gui_tests=True).
+option(IRONCAST_GUI_TESTS "Build the GUI tests (tests/gui, Dear ImGui Test Engine)" OFF)
+if(IRONCAST_UNIT_TESTS OR IRONCAST_GUI_TESTS)
     enable_testing()
     add_subdirectory(${PROJECT_SOURCE_DIR}/tests)
 endif()
