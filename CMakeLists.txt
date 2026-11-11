@@ -83,6 +83,13 @@ target_link_libraries(
     stb::stb
 )
 
+# Native Wasm exceptions, as in the Emscripten Conan profile: JSPI (the WebGPU backend) can't suspend through the
+# JS invoke_* wrappers of JS-based exceptions. Public, because the app and every library have to use the same model.
+if(EMSCRIPTEN)
+    target_compile_options(ironcast PUBLIC -fwasm-exceptions)
+    target_link_options(ironcast PUBLIC -fwasm-exceptions)
+endif()
+
 # libassert isn't available on Emscripten; ironcast/assert.hpp turns the assertions into no-ops there.
 if(NOT EMSCRIPTEN)
     find_package(libassert REQUIRED)
