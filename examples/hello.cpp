@@ -19,7 +19,7 @@ struct Hello: Widget {
 };
 
 int main(int argc, char** argv) {
-    auto app = Ironcast(argc, argv);
+    auto& app = Ironcast::app(argc, argv);
     app.set_backend_factory([](const WindowConfig& config) {
         return std::make_unique<vulkan::Backend>(config);
     });

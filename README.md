@@ -39,7 +39,7 @@ struct Hello: Widget {
 };
 
 int main(int argc, char** argv) {
-    auto app = Ironcast(argc, argv);
+    auto& app = Ironcast::app(argc, argv);
     app.set_backend_factory([](const WindowConfig& config) {
         return std::make_unique<vulkan::Backend>(config);
     });
@@ -70,6 +70,17 @@ The first run builds the missing packages, which takes a while. Emscripten needs
 the `PATH`.
 
 On Windows, use `scripts\install.ps1` and `scripts\build.ps1` with `msvc` or `clang-cl`.
+
+Instead of `build.sh` / `build.ps1`, CMake presets do the same, one per compiler and build type
+(`cmake --list-presets` shows the ones for your OS):
+
+```sh
+cmake --preset gcc-debug              # <compiler>-<debug|release>, same build/ folder as build.sh
+cmake --build build/gcc-debug
+ctest --preset gcc-debug
+```
+
+The `msvc` presets need a Visual Studio developer prompt, as Ninja uses its environment.
 
 CMake options, all on by default: `IRONCAST_OPENGL`, `IRONCAST_SDLGPU`, `IRONCAST_WEBGPU`, `IRONCAST_VULKAN`,
 `IRONCAST_EXTRAS`, `IRONCAST_BUNDLE_FONTS`, `IRONCAST_INSPECTOR`. Examples and unit tests build when ironcast is

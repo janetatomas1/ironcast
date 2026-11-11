@@ -40,7 +40,7 @@ struct Chart3D: Widget {
 };
 
 int main(const int argc, char** argv) {
-    auto app = Ironcast(argc, argv);
+    auto& app = Ironcast::app(argc, argv);
     app.set_backend_factory([](const WindowConfig& config) {
         return std::make_unique<opengl::Backend>(config);
     });

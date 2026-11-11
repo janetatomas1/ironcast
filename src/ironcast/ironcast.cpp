@@ -60,6 +60,11 @@ namespace ironcast {
         );
     }
 
+    Ironcast& Ironcast::app(int argc, char** argv) {
+        static Ironcast instance(argc, argv);
+        return instance;
+    }
+
     Ironcast::~Ironcast() {
         wake_on_log(false);
         SDL_SetLogOutputFunction(SDL_GetDefaultLogOutputFunction(), nullptr);
@@ -86,8 +91,9 @@ namespace ironcast {
         init();
 
 #ifdef __EMSCRIPTEN__
-        // The browser drives the loop: one update() per animation frame. With simulate_infinite_loop,
-        // exec() never returns, so main()'s stack (and this Ironcast on it) stays alive.
+        // The browser drives the loop: one update() per animation frame. simulate_infinite_loop unwinds
+        // main()'s stack (without running destructors) and its memory is reused, which is why the app is
+        // the static from app() and never a local in main().
         emscripten_set_main_loop_arg(
             [](void* arg) {
                 auto& app = *static_cast<Ironcast*>(arg);

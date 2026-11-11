@@ -101,6 +101,12 @@ namespace ironcast {
     WindowManager::WindowManager(Ironcast &app) : app_(app) {}
 
     void WindowManager::init() {
+#ifdef __EMSCRIPTEN__
+        // With JSPI linked (the WebGPU backend needs it), SDL would call emscripten_sleep() on every GL swap to
+        // give the browser a frame. The browser main loop already does that, and suspending inside a frame
+        // fails ("trying to suspend JS frames").
+        SDL_SetHint(SDL_HINT_EMSCRIPTEN_ASYNCIFY, "0");
+#endif
         [[maybe_unused]] bool ok = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD | SDL_INIT_EVENTS);
         IRONCAST_DEBUG_ASSERT(ok, "SDL_Init failed", SDL_GetError());
 

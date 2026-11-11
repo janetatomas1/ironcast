@@ -14,8 +14,8 @@
 
 namespace ironcast {
     // The application: owns the windows, the action queue, the theme, fonts and images, and runs the main
-    // loop. Create exactly one, add windows, then return exec() from main(). Most calls are UI thread
-    // only; add_action() is the way in from other threads.
+    // loop. Get it with Ironcast::app(), add windows, then return exec() from main(). Most calls are UI
+    // thread only; add_action() is the way in from other threads.
     class Ironcast {
         // The live app, so widgets reach it without a window (e.g. from their constructors).
         static inline Ironcast* current_ = nullptr;
@@ -44,9 +44,15 @@ namespace ironcast {
         void update();
         // Makes messages logged from any thread wake the loop, so a LogWidget shows them; false undoes it.
         void wake_on_log(bool enabled);
-    public:
+
         Ironcast(int argc, char** argv);
+    public:
         ~Ironcast();
+
+        // The one app, created on the first call; later calls return it and ignore their arguments. It is a
+        // function-local static rather than a local in main(): on Emscripten, exec() unwinds main()'s stack
+        // and the browser keeps calling into the app, so it must not live there.
+        static Ironcast& app(int argc, char** argv);
 
         // WindowManager and current_ hold this address, so it must not move.
         Ironcast(const Ironcast&) = delete;

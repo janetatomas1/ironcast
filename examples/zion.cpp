@@ -1345,7 +1345,7 @@ struct Root : public DockArea {
 };
 
 int main(const int argc, char** argv) {
-    auto app = Ironcast(argc, argv);
+    auto& app = Ironcast::app(argc, argv);
 
     Theme theme = Theme::matrix();
     theme.font = &Font::jetbrains_mono();
