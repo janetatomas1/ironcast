@@ -84,8 +84,8 @@ The `msvc` presets need a Visual Studio developer prompt, as Ninja uses its envi
 
 CMake options, all on by default: `IRONCAST_OPENGL`, `IRONCAST_SDLGPU`, `IRONCAST_WEBGPU`, `IRONCAST_VULKAN`,
 `IRONCAST_EXTRAS`, `IRONCAST_BUNDLE_FONTS`, `IRONCAST_INSPECTOR`. Examples and unit tests build when ironcast is
-the top-level project (`IRONCAST_BUILD_EXAMPLES`, `IRONCAST_UNIT_TESTS`). The GUI tests (`IRONCAST_GUI_TESTS`) are
-off by default: they need imgui built with Dear ImGui Test Engine.
+the top-level project (`IRONCAST_BUILD_EXAMPLES`, `IRONCAST_UNIT_TESTS`). `IRONCAST_GUI_TESTS` (tests/gui) is off by
+default: there are no GUI tests yet.
 
 ## Using it in a project
 
@@ -106,6 +106,12 @@ The app has to provide the same dependencies, e.g. through the same Conan toolch
 - [CHANGELOG.md](CHANGELOG.md)
 - [docs/roadmap.md](docs/roadmap.md)
 - [docs/measure.md](docs/measure.md)
+
+## License
+
+ironcast is MIT licensed, see [LICENSE](LICENSE). The bundled fonts in `fonts/` (Inter, JetBrains Mono, Noto Sans)
+are under the SIL Open Font License, see `fonts/*/OFL.txt`. With `IRONCAST_BUNDLE_FONTS` they are compiled into
+your binary, so ship those license texts with your app. Dependencies keep their own licenses.
 
 ## AI usage
 
