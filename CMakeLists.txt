@@ -318,10 +318,16 @@ if(IRONCAST_BUILD_EXAMPLES)
     add_subdirectory(${IRONCAST_EXAMPLES_DIR})
 endif()
 
+option(IRONCAST_TESTING "Build ironcast_testing library" ON)
+if(IRONCAST_TESTING)
+    add_subdirectory(${PROJECT_SOURCE_DIR}/ironcast_testing)
+endif()
+
 option(IRONCAST_UNIT_TESTS "Build the unit tests (tests/unit, GoogleTest)" ${PROJECT_IS_TOP_LEVEL})
-# Off by default: there are no GUI tests yet.
-option(IRONCAST_GUI_TESTS "Build the GUI tests (tests/gui)" OFF)
+option(IRONCAST_GUI_TESTS "Build the GUI tests (tests/gui)" ON)
+
 if(IRONCAST_UNIT_TESTS OR IRONCAST_GUI_TESTS)
     enable_testing()
     add_subdirectory(${PROJECT_SOURCE_DIR}/tests)
 endif()
+
