@@ -31,14 +31,14 @@ namespace ironcast::testing {
         }
 
         // Re-posts itself until the window exists, then runs the body once the scene has settled.
-        void start(Ironcast& app, uint64_t windowId, Widget& scene, const Test& test) {
+        void start(Ironcast& app, uint64_t windowId, Test& test) {
             if (app.get_window(windowId) == nullptr) {
-                app.add_action([&app, windowId, &scene, &test] { start(app, windowId, scene, test); }, 1);
+                app.add_action([&app, windowId, &test] { start(app, windowId, test); }, 1);
                 return;
             }
-            app.add_action([&app, &scene, &test] {
+            app.add_action([&app, &test] {
                 try {
-                    test.body(scene);
+                    test.body();
                 } catch (const std::exception& e) {
                     std::cerr << std::format("uncaught exception: {}\n", e.what());
                     failed = true;
@@ -50,7 +50,7 @@ namespace ironcast::testing {
             }, settleFrames);
         }
 
-        int run_test(int argc, char** argv, const Test& test) {
+        int run_test(int argc, char** argv, Test& test) {
             // Before Ironcast::app() initializes SDL: windows only in memory, no display needed.
             SDL_SetHint(SDL_HINT_VIDEO_DRIVER, "offscreen");
 
@@ -69,11 +69,10 @@ namespace ironcast::testing {
             auto window = std::make_unique<Window>(app.make_backend(config));
             Window* raw = window.get();
             std::unique_ptr<Widget> scene = test.scene();
-            Widget& sceneRef = *scene; // before the move
             const uint64_t id = app.add_window(std::move(window));
             raw->set_root_widget(std::move(scene));
 
-            app.add_action([&app, id, &sceneRef, &test] { start(app, id, sceneRef, test); });
+            app.add_action([&app, id, &test] { start(app, id, test); });
             app.exec();
 
             std::cout << std::format("{} {}\n", failed ? "FAILED" : "PASSED", test.name());
