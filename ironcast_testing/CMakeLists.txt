@@ -3,7 +3,7 @@ add_library(
     ironcast_testing
     STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ironcast/testing/test.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ironcast/testing/testing.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ironcast/testing/runner.cpp
 )
 add_library(ironcast::testing ALIAS ironcast_testing)
 
