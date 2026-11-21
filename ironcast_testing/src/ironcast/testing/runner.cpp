@@ -10,6 +10,7 @@
 #include "ironcast/ironcast.hpp"
 #include "ironcast/nullbackend.hpp"
 #include "ironcast/window.hpp"
+#include "ironcast/testing/check.hpp"
 #include "ironcast/testing/runner.hpp"
 
 namespace ironcast::testing {
@@ -17,7 +18,8 @@ namespace ironcast::testing {
         // Dispatches between the window opening and the body: the root widget is swapped in, then laid out.
         constexpr uint64_t settleFrames = 2;
 
-        bool failed = false;
+        // Failed checks of the running test; any makes it fail.
+        int failures = 0;
 
         // Function-local: tests register from static initializers in other translation units, which may
         // run before a namespace-scope vector in this file has been constructed.
@@ -39,12 +41,12 @@ namespace ironcast::testing {
             app.add_action([&app, &test] {
                 try {
                     test.body();
+                } catch (const RequireFailed&) {
+                    // Already recorded by REQUIRE.
                 } catch (const std::exception& e) {
-                    std::cerr << std::format("uncaught exception: {}\n", e.what());
-                    failed = true;
+                    fail(std::format("uncaught exception: {}", e.what()));
                 } catch (...) {
-                    std::cerr << "uncaught exception\n";
-                    failed = true;
+                    fail("uncaught exception");
                 }
                 app.exit();
             }, settleFrames);
@@ -68,9 +70,18 @@ namespace ironcast::testing {
             app.add_action([&app, id, &test] { start(app, id, test); });
             app.exec();
 
-            std::cout << std::format("{} {}\n", failed ? "FAILED" : "PASSED", test.name());
-            return failed ? 1 : 0;
+            if (failures > 0) {
+                std::cout << std::format("FAILED {} ({} failed checks)\n", test.name(), failures);
+                return 1;
+            }
+            std::cout << std::format("PASSED {}\n", test.name());
+            return 0;
         }
+    }
+
+    void fail(std::string_view message, std::source_location location) {
+        failures += 1;
+        std::cerr << std::format("{}:{}: {}\n", location.file_name(), location.line(), message);
     }
 
     void add_test(std::string name, std::unique_ptr<Test> test) {
