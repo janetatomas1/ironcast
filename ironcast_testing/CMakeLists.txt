@@ -13,3 +13,6 @@ target_include_directories(
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
+
+# ironcast_discover_tests(), for tests/gui and any test executable in a project that adds ironcast.
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/ironcastTesting.cmake)
