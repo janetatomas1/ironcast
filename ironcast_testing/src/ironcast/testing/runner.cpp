@@ -59,16 +59,9 @@ namespace ironcast::testing {
                 return std::make_unique<NullBackend>(config);
             });
 
-            // Fixed size, not maximized, so results don't depend on the machine.
-            WindowConfig config;
-            config.width = 1280;
-            config.height = 720;
-            config.title = test.name();
-            config.windowState = WindowState::NORMAL;
-
-            auto window = std::make_unique<Window>(app.make_backend(config));
+            auto window = std::make_unique<Window>(app.make_backend(test.config()));
             Window* raw = window.get();
-            std::unique_ptr<Widget> scene = test.scene();
+            std::unique_ptr<Widget> scene = test.make_scene();
             const uint64_t id = app.add_window(std::move(window));
             raw->set_root_widget(std::move(scene));
 
@@ -80,7 +73,8 @@ namespace ironcast::testing {
         }
     }
 
-    void add_test(std::unique_ptr<Test> test) {
+    void add_test(std::string name, std::unique_ptr<Test> test) {
+        test->name_ = std::move(name);
         registry().push_back(std::move(test));
     }
 
