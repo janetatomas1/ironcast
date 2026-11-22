@@ -23,6 +23,10 @@ namespace ironcast {
         return *this;
     }
 
+    const fu2::unique_function<void()>& MenuItem::callback() const {
+        return callback_;
+    }
+
     MenuItem& MenuItem::set_checkable(bool checkable) {
         checkable_ = checkable;
         return *this;

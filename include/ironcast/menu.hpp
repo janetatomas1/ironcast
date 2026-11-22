@@ -31,6 +31,8 @@ namespace ironcast {
 
         // Called on the next dispatch after a click (see post()). Empty = none.
         MenuItem& set_callback(fu2::unique_function<void()> callback);
+        // Empty when none is set.
+        [[nodiscard]] const fu2::unique_function<void()>& callback() const;
 
         // A checkable item toggles checked() when clicked, before the callback runs.
         MenuItem& set_checkable(bool checkable);

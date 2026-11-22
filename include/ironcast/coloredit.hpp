@@ -2,7 +2,7 @@
 
 #include <array>
 #include <cstddef>
-#include <functional>
+#include <function2/function2.hpp>
 #include <string>
 
 #include "ironcast/widget.hpp"
@@ -30,7 +30,7 @@ namespace ironcast {
             return value;
         }();
         ColorEditFlags flags_ = ImGuiColorEditFlags_None;
-        std::function<void(const Value&)> onChange_;
+        fu2::unique_function<void(const Value&)> callback_;
 
         // label_extent(), or 0 with NoLabel.
         [[nodiscard]] float shown_label_extent() const;
@@ -50,7 +50,9 @@ namespace ironcast {
 
         // Called on the next dispatch (see post()) with the new value after the user changes it;
         // set_value() doesn't call it.
-        ColorEdit& set_on_change(std::function<void(const Value&)> callback);
+        ColorEdit& set_callback(fu2::unique_function<void(const Value&)> callback);
+        // Empty when none is set.
+        [[nodiscard]] const fu2::unique_function<void(const Value&)>& callback() const;
     };
 
     template <std::size_t N>
@@ -84,10 +86,10 @@ namespace ironcast {
         }
         pop_frame_height(pushed);
 
-        if (changed && onChange_) {
+        if (changed && callback_) {
             post([value = value_](auto& self) {
-                if (self.onChange_) {
-                    self.onChange_(value);
+                if (self.callback_) {
+                    self.callback_(value);
                 }
             });
         }
@@ -142,8 +144,13 @@ namespace ironcast {
     }
 
     template <std::size_t N>
-    ColorEdit<N>& ColorEdit<N>::set_on_change(std::function<void(const Value&)> callback) {
-        onChange_ = std::move(callback);
+    ColorEdit<N>& ColorEdit<N>::set_callback(fu2::unique_function<void(const Value&)> callback) {
+        callback_ = std::move(callback);
         return *this;
+    }
+
+    template <std::size_t N>
+    auto ColorEdit<N>::callback() const -> const fu2::unique_function<void(const Value&)>& {
+        return callback_;
     }
 }

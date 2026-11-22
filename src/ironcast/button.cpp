@@ -45,4 +45,8 @@ namespace ironcast {
     void Button::set_callback(fu2::unique_function<void()> callback) {
         callback_ = std::move(callback);
     }
+
+    const fu2::unique_function<void()>& Button::callback() const {
+        return callback_;
+    }
 }

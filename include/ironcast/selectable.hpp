@@ -1,6 +1,6 @@
 #pragma once
 
-#include <functional>
+#include <function2/function2.hpp>
 #include <string>
 #include <vector>
 
@@ -17,11 +17,11 @@ namespace ironcast {
         std::vector<bool> selected_;
         // ScopeRect: box-select and click-void clearing stay inside this list, not the whole window.
         ImGuiMultiSelectFlags flags_ = ImGuiMultiSelectFlags_ScopeRect;
-        std::function<void(std::vector<size_t>)> onChange_;
+        fu2::unique_function<void(std::vector<size_t>)> callback_;
 
     public:
-        // on_change gets the selected indices, in order.
-        Selectable(std::function<void(std::vector<size_t>)> on_change = nullptr, Widget* parent = nullptr);
+        // The callback gets the selected indices, in order.
+        Selectable(fu2::unique_function<void(std::vector<size_t>)> callback = nullptr, Widget* parent = nullptr);
 
         // Both apply on the next dispatch (count() doesn't change until then). remove_item's index
         // is resolved then, so queued adds and removes apply in call order.
@@ -38,7 +38,9 @@ namespace ironcast {
         Selectable& set_flags(ImGuiMultiSelectFlags flags);
         [[nodiscard]] ImGuiMultiSelectFlags flags() const;
 
-        Selectable& set_on_change(std::function<void(std::vector<size_t>)> callback);
+        Selectable& set_callback(fu2::unique_function<void(std::vector<size_t>)> callback);
+        // Empty when none is set.
+        [[nodiscard]] const fu2::unique_function<void(std::vector<size_t>)>& callback() const;
 
         bool show() final;
         ImVec2 measure(float width, YGMeasureMode widthMode, float height, YGMeasureMode heightMode) final;

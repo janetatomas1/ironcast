@@ -17,6 +17,8 @@ namespace ironcast::opengl {
         ImageButton(const std::string& title, fu2::unique_function<void()> callback, Widget* parent = nullptr);
 
         void set_callback(fu2::unique_function<void()> callback);
+        // Empty when none is set.
+        [[nodiscard]] const fu2::unique_function<void()>& callback() const;
         bool show() final;
     };
 }

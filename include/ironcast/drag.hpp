@@ -3,7 +3,7 @@
 #include <array>
 #include <concepts>
 #include <cstddef>
-#include <functional>
+#include <function2/function2.hpp>
 #include <optional>
 #include <string>
 #include <type_traits>
@@ -32,7 +32,7 @@ namespace ironcast {
         std::optional<T> max_;
         std::string format_;
         DragFlags flags_ = ImGuiSliderFlags_None;
-        std::function<void(const Value&)> onChange_;
+        fu2::unique_function<void(const Value&)> callback_;
 
     public:
         Drag(const std::string& title = "", Widget* parent = nullptr);
@@ -63,7 +63,9 @@ namespace ironcast {
 
         // Called on the next dispatch (see post()) with the new value after the user changes it;
         // set_value() doesn't call it.
-        Drag& set_on_change(std::function<void(const Value&)> callback);
+        Drag& set_callback(fu2::unique_function<void(const Value&)> callback);
+        // Empty when none is set.
+        [[nodiscard]] const fu2::unique_function<void(const Value&)>& callback() const;
     };
 
     template <std::size_t N = 1>
@@ -100,10 +102,10 @@ namespace ironcast {
         const bool changed = ImGui::DragScalarN(id.c_str(), dataType, data, N, speed_, min, max, format, flags_);
         pop_frame_height(pushed);
 
-        if (changed && onChange_) {
+        if (changed && callback_) {
             post([value = value_](auto& self) {
-                if (self.onChange_) {
-                    self.onChange_(value);
+                if (self.callback_) {
+                    self.callback_(value);
                 }
             });
         }
@@ -186,8 +188,13 @@ namespace ironcast {
     }
 
     template <std::size_t N, typename T>
-    Drag<N, T>& Drag<N, T>::set_on_change(std::function<void(const Value&)> callback) {
-        onChange_ = std::move(callback);
+    Drag<N, T>& Drag<N, T>::set_callback(fu2::unique_function<void(const Value&)> callback) {
+        callback_ = std::move(callback);
         return *this;
+    }
+
+    template <std::size_t N, typename T>
+    auto Drag<N, T>::callback() const -> const fu2::unique_function<void(const Value&)>& {
+        return callback_;
     }
 }

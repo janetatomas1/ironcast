@@ -3,7 +3,7 @@
 #include <array>
 #include <concepts>
 #include <cstddef>
-#include <functional>
+#include <function2/function2.hpp>
 #include <string>
 #include <type_traits>
 
@@ -30,7 +30,7 @@ namespace ironcast {
         T stepFast_ = std::same_as<T, int> ? static_cast<T>(100) : static_cast<T>(0);
         std::string format_;
         InputFlags flags_ = ImGuiInputTextFlags_None;
-        std::function<void(const Value&)> onChange_;
+        fu2::unique_function<void(const Value&)> callback_;
 
     public:
         Input(const std::string& title = "", Widget* parent = nullptr);
@@ -59,7 +59,9 @@ namespace ironcast {
 
         // Called on the next dispatch (see post()) with the new value after the user changes it;
         // set_value() doesn't call it.
-        Input& set_on_change(std::function<void(const Value&)> callback);
+        Input& set_callback(fu2::unique_function<void(const Value&)> callback);
+        // Empty when none is set.
+        [[nodiscard]] const fu2::unique_function<void(const Value&)>& callback() const;
     };
 
     template <std::size_t N = 1>
@@ -96,10 +98,10 @@ namespace ironcast {
         const bool changed = ImGui::InputScalarN(id.c_str(), dataType, data, N, step, stepFast, format, flags_);
         pop_frame_height(pushed);
 
-        if (changed && onChange_) {
+        if (changed && callback_) {
             post([value = value_](auto& self) {
-                if (self.onChange_) {
-                    self.onChange_(value);
+                if (self.callback_) {
+                    self.callback_(value);
                 }
             });
         }
@@ -170,8 +172,13 @@ namespace ironcast {
     }
 
     template <std::size_t N, typename T>
-    Input<N, T>& Input<N, T>::set_on_change(std::function<void(const Value&)> callback) {
-        onChange_ = std::move(callback);
+    Input<N, T>& Input<N, T>::set_callback(fu2::unique_function<void(const Value&)> callback) {
+        callback_ = std::move(callback);
         return *this;
+    }
+
+    template <std::size_t N, typename T>
+    auto Input<N, T>::callback() const -> const fu2::unique_function<void(const Value&)>& {
+        return callback_;
     }
 }

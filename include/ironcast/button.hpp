@@ -27,5 +27,7 @@ namespace ironcast {
         // Called on the next dispatch after a click, not inside the frame (see post()), and dropped
         // if the button is destroyed first. Empty = none.
         void set_callback(fu2::unique_function<void()> callback);
+        // Empty when none is set.
+        [[nodiscard]] const fu2::unique_function<void()>& callback() const;
     };
 }

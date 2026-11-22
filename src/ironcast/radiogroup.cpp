@@ -41,9 +41,9 @@ namespace ironcast {
         return rb;
     }
 
-    RadioButton& RadioGroup::add_option(const std::string& label, std::function<void()> onSelect) {
+    RadioButton& RadioGroup::add_option(const std::string& label, fu2::unique_function<void()> callback) {
         auto& rb = add(
-            label, &selected_, static_cast<int>(count()), std::move(onSelect), this
+            label, &selected_, static_cast<int>(count()), std::move(callback), this
         );
         rb.margin(10);
         return rb;

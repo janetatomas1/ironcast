@@ -764,7 +764,7 @@ struct GPUTab : public Widget {
         const auto index = preferred == cards.end() ? 0 : static_cast<std::size_t>(preferred - cards.begin());
         picker.set_selected(static_cast<int>(index));
         select(index);
-        picker.set_on_change([this](int selected) { select(static_cast<std::size_t>(selected)); });
+        picker.set_callback([this](int selected) { select(static_cast<std::size_t>(selected)); });
     }
 };
 
@@ -960,7 +960,7 @@ struct DiskTab : public Widget {
 
         picker.set_selected(0);
         select(0);
-        picker.set_on_change([this](int selected) { select(static_cast<std::size_t>(selected)); });
+        picker.set_callback([this](int selected) { select(static_cast<std::size_t>(selected)); });
     }
 };
 
@@ -1185,7 +1185,7 @@ struct ProcessesTab : public Widget {
         toolbar.row(8.0f).align_items(YGAlignCenter);
         filter.set_hint("Filter by name or PID");
         filter.flex_grow(1);
-        filter.set_on_change([this](const std::string& text) {
+        filter.set_callback([this](const std::string& text) {
             list.filter = text;
             list.resort = true;
         });

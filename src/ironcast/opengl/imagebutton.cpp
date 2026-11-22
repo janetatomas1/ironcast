@@ -17,6 +17,10 @@ namespace ironcast::opengl {
         callback_ = std::move(callback);
     }
 
+    const fu2::unique_function<void()>& ImageButton::callback() const {
+        return callback_;
+    }
+
     bool ImageButton::show() {
         if (texture() == nullptr) {
             return false;
