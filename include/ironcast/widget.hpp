@@ -36,6 +36,8 @@ namespace ironcast {
         Window* window_ = nullptr;
         // Top-left of the Yoga box in screen space, recorded by render().
         ImVec2 screenPos_{0.0f, 0.0f};
+        // Far corner of what render() drew in the current window, in screen space.
+        ImVec2 drawnMax_{0.0f, 0.0f};
         // The widget that measures this one when it is drawn outside the Yoga tree (a menu's bar, a cell's
         // table); 0 = none. An id, so a destroyed owner is just skipped.
         uint64_t entryOwner_ = 0;
@@ -223,6 +225,12 @@ namespace ironcast {
         // Top-left of the box in screen space as of the last render(). Not updated for widgets
         // drawn through draw() only (menu entries, table cells).
         [[nodiscard]] const ImVec2& screen_position() const;
+        // What the last render() actually drew, in screen space: from screen_position() to the far corner of
+        // the ImGui items submitted in the current window (a child window counts as its own rect). For
+        // checking that drawing matches the layout. Empty when nothing was drawn there (e.g. a popup, which
+        // draws in its own window); not updated for widgets drawn through draw() only.
+        [[nodiscard]] const ImVec2& drawn_min() const;
+        [[nodiscard]] const ImVec2& drawn_max() const;
         [[nodiscard]] float layout_margin(YGEdge edge) const;
         [[nodiscard]] float layout_padding(YGEdge edge) const;
         [[nodiscard]] float layout_border(YGEdge edge) const;

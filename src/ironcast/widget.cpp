@@ -3,6 +3,8 @@
 #include <cmath>
 #include <format>
 
+#include <imgui_internal.h>
+
 #include "ironcast/assert.hpp"
 
 #include "ironcast/widget.hpp"
@@ -31,6 +33,7 @@ namespace ironcast {
         enabled_(other.enabled_),
         window_(other.window_),
         screenPos_(other.screenPos_),
+        drawnMax_(other.drawnMax_),
         entryOwner_(other.entryOwner_),
         layout_(std::move(other.layout_)),
         style_(std::move(other.style_)) {
@@ -62,6 +65,7 @@ namespace ironcast {
             enabled_ = other.enabled_;
             window_ = other.window_;
             screenPos_ = other.screenPos_;
+            drawnMax_ = other.drawnMax_;
             entryOwner_ = other.entryOwner_;
             layout_ = std::move(other.layout_);
             layout_.set_owner(this);
@@ -201,7 +205,20 @@ namespace ironcast {
     bool Widget::render() {
         ImGui::SetCursorPos(layout().position());
         screenPos_ = ImGui::GetCursorScreenPos();
-        return draw();
+
+        // The drawn rect, the way BeginGroup/EndGroup get theirs but without the group: ImGui grows
+        // CursorMaxPos to the far corner of every item submitted in the window, so starting it at our
+        // corner gives the extent of what draw() submitted. Restored to the larger of the two, so the
+        // window's content size is unchanged.
+        ImGuiWindow* window = ImGui::GetCurrentWindow();
+        const ImVec2 backupMax = window->DC.CursorMaxPos;
+        window->DC.CursorMaxPos = screenPos_;
+
+        const bool changed = draw();
+
+        drawnMax_ = window->DC.CursorMaxPos;
+        window->DC.CursorMaxPos = ImMax(backupMax, drawnMax_);
+        return changed;
     }
 
     bool Widget::draw() {
@@ -636,6 +653,14 @@ namespace ironcast {
 
     const ImVec2& Widget::screen_position() const {
         return screenPos_;
+    }
+
+    const ImVec2& Widget::drawn_min() const {
+        return screenPos_;
+    }
+
+    const ImVec2& Widget::drawn_max() const {
+        return drawnMax_;
     }
 
     float Widget::layout_margin(YGEdge edge) const {
