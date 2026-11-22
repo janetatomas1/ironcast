@@ -84,7 +84,7 @@ namespace ironcast {
     void Ironcast::destroy() {
         // SDL shuts down with the windows; no more wake events after that.
         wake_on_log(false);
-        exiting_();
+        onExit_();
         windowManager_.destroy();
     }
 
@@ -283,5 +283,17 @@ namespace ironcast {
 
     void Ironcast::remove_window(uint64_t id) {
         windowManager_.remove_window(id);
+    }
+
+    Signal<Window&>& Ironcast::on_window_add() {
+        return onWindowAdd_;
+    }
+
+    Signal<Window&>& Ironcast::on_window_remove() {
+        return onWindowRemove_;
+    }
+
+    Signal<>& Ironcast::on_exit() {
+        return onExit_;
     }
 }

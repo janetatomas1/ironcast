@@ -18,7 +18,7 @@ namespace ironcast {
     class WindowManager;
     class Inspector;
 
-    // An SDL event for Window::event_. A slot sets handled to consume it: later slots still see it, but neither
+    // An SDL event for Window::on_event(). A slot sets handled to consume it: later slots still see it, but neither
     // ImGui nor ironcast processes it (a handled close request leaves the window open).
     struct Event {
         const SDL_Event& sdl;
@@ -36,13 +36,9 @@ namespace ironcast {
         std::unique_ptr<GPUBackend> backend_;
         // Non-null while the inspector is open.
         std::unique_ptr<Inspector> inspector_;
+        Signal<Event&> onEvent_;
+        Signal<> onDraw_;
     public:
-        // Each event for this window, before ImGui. Events that belong to no window reach every window.
-        Signal<Event&> event_;
-        // Each frame, after the root widget, inside the ImGui frame: slots can draw (e.g. overlays). The
-        // inspector draws after them.
-        Signal<> frame_;
-
         virtual ~Window();
         Window(const Window&) = delete;
         Window& operator=(const Window&) = delete;
@@ -100,5 +96,10 @@ namespace ironcast {
         [[nodiscard]] bool inspector_open() const;
         // Called by the backend each frame, after the root widget's ImGui window has ended.
         void update_inspector();
+        // Each event for this window, before ImGui. Events that belong to no window reach every window.
+        Signal<Event&>& on_event();
+        // Each frame, after the root widget, inside the ImGui frame: slots can draw (e.g. overlays). The
+        // inspector draws after them.
+        Signal<>& on_draw();
     };
 }

@@ -39,6 +39,9 @@ namespace ironcast {
         static RandomGenerator randomGenerator_;
         ActionManager actionManager_;
         Theme theme_;
+        Signal<Window&> onWindowAdd_;
+        Signal<Window&> onWindowRemove_;
+        Signal<> onExit_;
 
         void init();
         void destroy();
@@ -48,13 +51,6 @@ namespace ironcast {
 
         Ironcast(int argc, char** argv);
     public:
-        // After a window is created (init() done), so slots can attach to it.
-        Signal<Window&> windowAdded_;
-        // Before a window is destroyed, also for the windows still open when the app exits.
-        Signal<Window&> windowRemoved_;
-        // When the loop has ended, before the windows are destroyed, e.g. to save state.
-        Signal<> exiting_;
-
         ~Ironcast();
 
         // The one app, created on the first call; later calls return it and ignore their arguments. It is a
@@ -147,6 +143,12 @@ namespace ironcast {
         void remove_window_at(size_t index);
         // Does nothing if the window has already been closed.
         void remove_window(uint64_t id);
+        // After a window is created (init() done), so slots can attach to it.
+        Signal<Window&>& on_window_add();
+        // Before a window is destroyed, also for the windows still open when the app exits.
+        Signal<Window&>& on_window_remove();
+        // When the loop has ended, before the windows are destroyed, e.g. to save state.
+        Signal<>& on_exit();
     };
 
     template <WidgetConcept W, typename ... Args>

@@ -176,7 +176,7 @@ namespace ironcast {
         // Windows that are still open when the app exits (e.g. via Ironcast::exit()) have to release their
         // ImGui and GL resources while SDL is still alive.
         for (auto &window: windows_) {
-            app_.windowRemoved_(*window);
+            app_.on_window_remove()(*window);
             window->destroy();
         }
         windows_.clear();
@@ -204,7 +204,7 @@ namespace ironcast {
             if (handle == nullptr) {
                 for (auto &window: windows_) {
                     Event e{event};
-                    window->event_(e);
+                    window->on_event()(e);
 
                     if (!e.handled) {
                         window->backend()->process_event(event);
@@ -220,7 +220,7 @@ namespace ironcast {
             }
 
             Event e{event};
-            target->event_(e);
+            target->on_event()(e);
 
             if (e.handled) {
                 continue;
@@ -277,7 +277,7 @@ namespace ironcast {
         app_.add_action([window = std::move(window), this] () mutable {
             window->init();
             windows_.push_back(std::move(window));
-            app_.windowAdded_(*windows_.back());
+            app_.on_window_add()(*windows_.back());
         });
 
         return id;
@@ -323,7 +323,7 @@ namespace ironcast {
                 return;
             }
 
-            app_.windowRemoved_(**it);
+            app_.on_window_remove()(**it);
             (*it)->destroy();
             windows_.erase(it);
         });

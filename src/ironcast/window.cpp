@@ -219,4 +219,12 @@ namespace ironcast {
         }
 #endif
     }
+
+    Signal<Event&>& Window::on_event() {
+        return onEvent_;
+    }
+
+    Signal<>& Window::on_draw() {
+        return onDraw_;
+    }
 }
