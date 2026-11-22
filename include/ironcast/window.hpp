@@ -11,11 +11,19 @@
 
 #include "ironcast/widget.hpp"
 #include "ironcast/gpubackend.hpp"
+#include "ironcast/signal.hpp"
 
 namespace ironcast {
     class Ironcast;
     class WindowManager;
     class Inspector;
+
+    // An SDL event for Window::event_. A slot sets handled to consume it: later slots still see it, but neither
+    // ImGui nor ironcast processes it (a handled close request leaves the window open).
+    struct Event {
+        const SDL_Event& sdl;
+        bool handled = false;
+    };
 
     // One OS window with its own GPU and ImGui contexts and a root widget laid out over the whole window.
     // Created through Ironcast::add_window(), which owns it; init(), update() and destroy() are driven by
@@ -29,6 +37,12 @@ namespace ironcast {
         // Non-null while the inspector is open.
         std::unique_ptr<Inspector> inspector_;
     public:
+        // Each event for this window, before ImGui. Events that belong to no window reach every window.
+        Signal<Event&> event_;
+        // Each frame, after the root widget, inside the ImGui frame: slots can draw (e.g. overlays). The
+        // inspector draws after them.
+        Signal<> frame_;
+
         virtual ~Window();
         Window(const Window&) = delete;
         Window& operator=(const Window&) = delete;

@@ -110,6 +110,7 @@ namespace ironcast {
         rootWidget->render();
 
         ImGui::End();
+        window_->frame_();
         window_->update_inspector();
         ImGui::Render();
     }

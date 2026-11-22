@@ -11,6 +11,7 @@
 #include "ironcast/theme.hpp"
 #include "ironcast/image.hpp"
 #include "ironcast/log.hpp"
+#include "ironcast/signal.hpp"
 
 namespace ironcast {
     // The application: owns the windows, the action queue, the theme, fonts and images, and runs the main
@@ -47,6 +48,13 @@ namespace ironcast {
 
         Ironcast(int argc, char** argv);
     public:
+        // After a window is created (init() done), so slots can attach to it.
+        Signal<Window&> windowAdded_;
+        // Before a window is destroyed, also for the windows still open when the app exits.
+        Signal<Window&> windowRemoved_;
+        // When the loop has ended, before the windows are destroyed, e.g. to save state.
+        Signal<> exiting_;
+
         ~Ironcast();
 
         // The one app, created on the first call; later calls return it and ignore their arguments. It is a
