@@ -307,6 +307,31 @@ Still open:
 - **Window icon.** `Ironcast::set_icon(const Image*)` is the default for every window,
   `Window::set_icon()` overrides it for one.
 
+## Plugins
+
+Optional features an app adds, which hook into the app's and each window's lifecycle instead of
+living in the core. Not started; the design is open. Build it when one of these needs it.
+
+- **Dev tools.**
+  - **Inspector:** moved out of the core, added by the apps that want it.
+  - **Overlays:** FPS and frame time, profiler (Tracy), ImGui's demo and metrics windows.
+  - **Live theme editing.**
+- **Integrations.**
+  - **ImPlot / ImPlot3D:** a context per window.
+  - **Datoviz:** GPU device set up before the first window and released after the last one.
+  - **Scripting consoles and remote control:** e.g. over a socket.
+- **Testing.**
+  - **Test driver:** runs a GUI test's steps frame by frame and injects input.
+  - **Widget recording:** where each widget was actually drawn, to compare with its layout.
+    Recorded for every widget today; as a plugin it would cost nothing in apps that don't use it.
+  - **Window recording:** screenshots of drawn frames, and input recorded from a session and
+    replayed in tests.
+- **App features.**
+  - **Global shortcuts, file drag and drop, notifications / toasts.**
+  - **Settings:** saved and restored per app and per window, autosave.
+  - **Hot reloading** of themes and fonts, **localisation**, a **crash reporter**.
+  - **Background services:** polling devices, timers or the network alongside the windows.
+
 ## Tests
 
 `tests/unit/` (GoogleTest, `ctest`, `IRONCAST_UNIT_TESTS`): measuring, colour parsing, `Series` and

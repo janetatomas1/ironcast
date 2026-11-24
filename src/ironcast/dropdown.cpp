@@ -100,9 +100,13 @@ namespace ironcast {
         return *this;
     }
 
-    Dropdown& Dropdown::set_on_change(std::function<void(int)> callback) {
-        onChange_ = std::move(callback);
+    Dropdown& Dropdown::set_callback(fu2::unique_function<void(int)> callback) {
+        callback_ = std::move(callback);
         return *this;
+    }
+
+    const fu2::unique_function<void(int)>& Dropdown::callback() const {
+        return callback_;
     }
 
     bool Dropdown::show() {
@@ -140,10 +144,10 @@ namespace ironcast {
             // WidthFitPreview measures the selected label; picked up on the next layout.
             layout().mark_dirty();
 
-            if (onChange_) {
+            if (callback_) {
                 post([selected = selected_](auto& self) {
-                    if (self.onChange_) {
-                        self.onChange_(selected);
+                    if (self.callback_) {
+                        self.callback_(selected);
                     }
                 });
             }

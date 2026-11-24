@@ -8,10 +8,10 @@
 
 namespace ironcast {
     Selectable::Selectable(
-        std::function<void(std::vector<size_t>)> on_change,
+        fu2::unique_function<void(std::vector<size_t>)> callback,
         Widget* parent
     ): Widget("", parent),
-    onChange_(std::move(on_change)) {
+    callback_(std::move(callback)) {
         layout().enable_measure();
     }
 
@@ -74,9 +74,13 @@ namespace ironcast {
         return flags_;
     }
 
-    Selectable& Selectable::set_on_change(std::function<void(std::vector<size_t>)> callback) {
-        onChange_ = std::move(callback);
+    Selectable& Selectable::set_callback(fu2::unique_function<void(std::vector<size_t>)> callback) {
+        callback_ = std::move(callback);
         return *this;
+    }
+
+    const fu2::unique_function<void(std::vector<size_t>)>& Selectable::callback() const {
+        return callback_;
     }
 
     bool Selectable::show() {
@@ -116,10 +120,10 @@ namespace ironcast {
         ImGui::PopID();
 
         const bool changed = selected_ != before;
-        if (changed && onChange_) {
+        if (changed && callback_) {
             post([indices = selected()](auto& self) {
-                if (self.onChange_) {
-                    self.onChange_(indices);
+                if (self.callback_) {
+                    self.callback_(indices);
                 }
             });
         }

@@ -5,20 +5,20 @@
 namespace ironcast {
     Checkbox::Checkbox(
         std::string title,
-        std::function<void(bool)> on_change,
+        fu2::unique_function<void(bool)> callback,
         Widget* parent
     ): Widget(title, parent),
-    onChange_(std::move(on_change)) {
+    callback_(std::move(callback)) {
         layout().enable_measure();
     }
 
     bool Checkbox::show() {
         bool changed = ImGui::Checkbox(title_id().c_str(), &value_);
 
-        if (changed && onChange_) {
+        if (changed && callback_) {
             post([value = value_](auto& self) {
-                if (self.onChange_) {
-                    self.onChange_(value);
+                if (self.callback_) {
+                    self.callback_(value);
                 }
             });
         }
@@ -46,8 +46,12 @@ namespace ironcast {
         return *this;
     }
 
-    Checkbox& Checkbox::set_on_change(std::function<void(bool)> callback) {
-        onChange_ = std::move(callback);
+    Checkbox& Checkbox::set_callback(fu2::unique_function<void(bool)> callback) {
+        callback_ = std::move(callback);
         return *this;
+    }
+
+    const fu2::unique_function<void(bool)>& Checkbox::callback() const {
+        return callback_;
     }
 }

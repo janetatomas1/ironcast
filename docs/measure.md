@@ -201,7 +201,7 @@ age.style<ErrorColor>().active = !valid;
   diverge.
 - **`pop()` must undo exactly what `push()` did**, recorded at push time (`pushed_` above).
   The part's state may change *between* the two, because the widget's callbacks
-  (e.g. `on_change`) run inside `W::show()`. If `pop()` re-checked `active`, a callback
+  (`callback`) run inside `W::show()`. If `pop()` re-checked `active`, a callback
   that sets it would unbalance the ImGui stack.
 - **Parts that affect size** (fonts, `FramePadding`, spacing) must mark the node dirty when
   their state changes. The part doesn't know its widget, so changes go through `Styled`:

@@ -12,8 +12,8 @@ namespace ironcast {
     }
 
     RadioButton::RadioButton(const std::string& title, int* groupValue, int value,
-                              std::function<void()> onSelect, Widget* parent)
-    : Widget(title, parent), groupValue_(groupValue), value_(value), onSelect_(std::move(onSelect)) {
+                              fu2::unique_function<void()> callback, Widget* parent)
+    : Widget(title, parent), groupValue_(groupValue), value_(value), callback_(std::move(callback)) {
         IRONCAST_DEBUG_ASSERT(groupValue_ != nullptr, "RadioButton requires a non-null groupValue pointer", title);
         layout().enable_measure();
     }
@@ -24,10 +24,10 @@ namespace ironcast {
         bool wasSelected = selected();
         bool clicked = ImGui::RadioButton(title_id().c_str(), groupValue_, value_);
 
-        if (clicked && !wasSelected && onSelect_) {
+        if (clicked && !wasSelected && callback_) {
             post([](auto& self) {
-                if (self.onSelect_) {
-                    self.onSelect_();
+                if (self.callback_) {
+                    self.callback_();
                 }
             });
         }
@@ -56,8 +56,12 @@ namespace ironcast {
         *groupValue_ = value_;
     }
 
-    RadioButton& RadioButton::set_on_select(std::function<void()> callback) {
-        onSelect_ = std::move(callback);
+    RadioButton& RadioButton::set_callback(fu2::unique_function<void()> callback) {
+        callback_ = std::move(callback);
         return *this;
+    }
+
+    const fu2::unique_function<void()>& RadioButton::callback() const {
+        return callback_;
     }
 }

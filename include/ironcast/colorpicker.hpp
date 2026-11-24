@@ -4,7 +4,7 @@
 #include <array>
 #include <bit>
 #include <cstddef>
-#include <functional>
+#include <function2/function2.hpp>
 #include <optional>
 #include <string>
 
@@ -41,7 +41,7 @@ namespace ironcast {
         }();
         std::optional<Value> reference_;
         ColorPickerFlags flags_ = ImGuiColorEditFlags_None;
-        std::function<void(const Value&)> onChange_;
+        fu2::unique_function<void(const Value&)> callback_;
         // Whether the last measure() laid out an alpha bar; the right-click menu can toggle it.
         bool measuredAlphaBar_ = false;
 
@@ -73,7 +73,9 @@ namespace ironcast {
 
         // Called on the next dispatch (see post()) with the new value after the user changes it;
         // set_value() doesn't call it.
-        ColorPicker& set_on_change(std::function<void(const Value&)> callback);
+        ColorPicker& set_callback(fu2::unique_function<void(const Value&)> callback);
+        // Empty when none is set.
+        [[nodiscard]] const fu2::unique_function<void(const Value&)>& callback() const;
     };
 
     template <std::size_t N>
@@ -194,10 +196,10 @@ namespace ironcast {
         if (changed) {
             std::copy(color, color + N, value_.begin());
 
-            if (onChange_) {
+            if (callback_) {
                 post([value = value_](auto& self) {
-                    if (self.onChange_) {
-                        self.onChange_(value);
+                    if (self.callback_) {
+                        self.callback_(value);
                     }
                 });
             }
@@ -275,8 +277,13 @@ namespace ironcast {
     }
 
     template <std::size_t N>
-    ColorPicker<N>& ColorPicker<N>::set_on_change(std::function<void(const Value&)> callback) {
-        onChange_ = std::move(callback);
+    ColorPicker<N>& ColorPicker<N>::set_callback(fu2::unique_function<void(const Value&)> callback) {
+        callback_ = std::move(callback);
         return *this;
+    }
+
+    template <std::size_t N>
+    auto ColorPicker<N>::callback() const -> const fu2::unique_function<void(const Value&)>& {
+        return callback_;
     }
 }

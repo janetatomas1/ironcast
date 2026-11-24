@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include <functional>
+#include <function2/function2.hpp>
 
 #include "ironcast/widget.hpp"
 
@@ -15,7 +15,7 @@ namespace ironcast {
     class Dropdown : public Widget {
         std::vector<std::string> options_;
         int selected_ = -1;
-        std::function<void(int)> onChange_;
+        fu2::unique_function<void(int)> callback_;
         std::string placeholder_ = "Select...";
         DropdownFlags flags_ = ImGuiComboFlags_None;
 
@@ -31,7 +31,7 @@ namespace ironcast {
         void remove_option(size_t index);
         void clear_options();
 
-        // Index of the selected option, -1 for none. set_selected() doesn't call on_change.
+        // Index of the selected option, -1 for none. set_selected() doesn't call the callback.
         [[nodiscard]] int selected() const;
         void set_selected(int index);
 
@@ -50,7 +50,9 @@ namespace ironcast {
 
         // Called on the next dispatch (see post()) with the new index after the user picks a
         // different option.
-        Dropdown& set_on_change(std::function<void(int)> callback);
+        Dropdown& set_callback(fu2::unique_function<void(int)> callback);
+        // Empty when none is set.
+        [[nodiscard]] const fu2::unique_function<void(int)>& callback() const;
 
         // True on the frame the user picks a different option.
         bool show() final;

@@ -176,6 +176,7 @@ namespace ironcast {
         // Windows that are still open when the app exits (e.g. via Ironcast::exit()) have to release their
         // ImGui and GL resources while SDL is still alive.
         for (auto &window: windows_) {
+            app_.on_window_remove()(*window);
             window->destroy();
         }
         windows_.clear();
@@ -202,15 +203,29 @@ namespace ironcast {
 
             if (handle == nullptr) {
                 for (auto &window: windows_) {
-                    window->backend()->process_event(event);
-                }
-            } else {
-                target = static_cast<Window*>(SDL_GetPointerProperty(SDL_GetWindowProperties(handle), "WRAPPER", nullptr));
+                    Event e{event};
+                    window->on_event()(e);
 
-                if (target != nullptr) {
-                    target->backend()->process_event(event);
+                    if (!e.handled) {
+                        window->backend()->process_event(event);
+                    }
                 }
+                continue;
             }
+
+            target = static_cast<Window*>(SDL_GetPointerProperty(SDL_GetWindowProperties(handle), "WRAPPER", nullptr));
+
+            if (target == nullptr) {
+                continue;
+            }
+
+            Event e{event};
+            target->on_event()(e);
+
+            if (e.handled) {
+                continue;
+            }
+            target->backend()->process_event(event);
 
             if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED) {
                 IRONCAST_DEBUG_ASSERT(target != nullptr, "close-requested event for untracked window");
@@ -218,7 +233,7 @@ namespace ironcast {
             }
 
             // Debug: a drag-resize sends one per step.
-            if (event.type == SDL_EVENT_WINDOW_RESIZED && target != nullptr) {
+            if (event.type == SDL_EVENT_WINDOW_RESIZED) {
                 logger().debug(
                     "window {} '{}' resized to {}x{}",
                     target->id(),
@@ -262,6 +277,7 @@ namespace ironcast {
         app_.add_action([window = std::move(window), this] () mutable {
             window->init();
             windows_.push_back(std::move(window));
+            app_.on_window_add()(*windows_.back());
         });
 
         return id;
@@ -307,6 +323,7 @@ namespace ironcast {
                 return;
             }
 
+            app_.on_window_remove()(**it);
             (*it)->destroy();
             windows_.erase(it);
         });

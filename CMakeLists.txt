@@ -49,6 +49,8 @@ set(
     ${IRONCAST_SOURCE_DIR}/dockarea.cpp
     ${IRONCAST_SOURCE_DIR}/style.cpp
     ${IRONCAST_SOURCE_DIR}/color.cpp
+    ${IRONCAST_SOURCE_DIR}/plugin.cpp
+    ${IRONCAST_SOURCE_DIR}/pluginmanager.cpp
 )
 
 find_package(sdl REQUIRED)
@@ -58,6 +60,7 @@ find_package(function2 REQUIRED)
 find_package(yoga REQUIRED)
 find_package(stb REQUIRED)
 find_package(spdlog REQUIRED)
+find_package(PalSigslot REQUIRED)
 
 add_library(
     ironcast
@@ -78,6 +81,7 @@ target_link_libraries(
     function2::function2
     yoga::yoga
     spdlog::spdlog
+    Pal::Sigslot
     PRIVATE
     # Only image.cpp decodes images.
     stb::stb

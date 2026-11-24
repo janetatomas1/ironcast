@@ -2,7 +2,7 @@
 #pragma once
 
 #include <string>
-#include <functional>
+#include <function2/function2.hpp>
 
 #include "ironcast/widget.hpp"
 
@@ -15,7 +15,7 @@ namespace ironcast {
     class TextInput : public Widget {
         std::string value_;
         std::string hint_;
-        std::function<void(const std::string&)> onChange_;
+        fu2::unique_function<void(const std::string&)> callback_;
         TextInputFlags flags_ = ImGuiInputTextFlags_None;
         bool multiline_ = false;
 
@@ -42,6 +42,8 @@ namespace ironcast {
 
         // Called on the next dispatch (see post()) with the new value after the user changes it;
         // set_value() doesn't call it.
-        TextInput& set_on_change(std::function<void(const std::string&)> callback);
+        TextInput& set_callback(fu2::unique_function<void(const std::string&)> callback);
+        // Empty when none is set.
+        [[nodiscard]] const fu2::unique_function<void(const std::string&)>& callback() const;
     };
 }

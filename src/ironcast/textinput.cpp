@@ -31,10 +31,10 @@ namespace ironcast {
             pop_frame_height(pushed);
         }
 
-        if (changed && onChange_) {
+        if (changed && callback_) {
             post([value = value_](auto& self) {
-                if (self.onChange_) {
-                    self.onChange_(value);
+                if (self.callback_) {
+                    self.callback_(value);
                 }
             });
         }
@@ -93,8 +93,12 @@ namespace ironcast {
         return *this;
     }
 
-    TextInput& TextInput::set_on_change(std::function<void(const std::string&)> callback) {
-        onChange_ = std::move(callback);
+    TextInput& TextInput::set_callback(fu2::unique_function<void(const std::string&)> callback) {
+        callback_ = std::move(callback);
         return *this;
+    }
+
+    const fu2::unique_function<void(const std::string&)>& TextInput::callback() const {
+        return callback_;
     }
 }
