@@ -12,6 +12,7 @@
 #include "ironcast/image.hpp"
 #include "ironcast/log.hpp"
 #include "ironcast/signal.hpp"
+#include "ironcast/pluginmanager.hpp"
 
 namespace ironcast {
     // The application: owns the windows, the action queue, the theme, fonts and images, and runs the main
@@ -42,6 +43,8 @@ namespace ironcast {
         Signal<Window&> onWindowAdd_;
         Signal<Window&> onWindowRemove_;
         Signal<> onExit_;
+        // Plugins are destroyed (via destroy()) before the windows.
+        PluginManager pluginManager_ = PluginManager(*this);
 
         void init();
         void destroy();
@@ -149,6 +152,16 @@ namespace ironcast {
         Signal<Window&>& on_window_remove();
         // When the loop has ended, before the windows are destroyed, e.g. to save state.
         Signal<>& on_exit();
+        // Constructs P (args forwarded) now and installs it on the next dispatch, so it can be added from a
+        // slot; plugin() finds it once installed. The app keeps it until remove_plugin() or exit; plugins are
+        // destroyed after on_exit, before the windows.
+        template<std::derived_from<Plugin> P, typename... Args>
+        P& add_plugin(Args &&... args);
+        // Destroys the plugin on the next dispatch. Does nothing if it has already been removed.
+        void remove_plugin(Plugin& plugin);
+        // The first plugin of type P, nullptr if there is none.
+        template<std::derived_from<Plugin> P>
+        P* plugin();
     };
 
     template <WidgetConcept W, typename ... Args>
@@ -166,5 +179,15 @@ namespace ironcast {
     template <WidgetConcept W, typename ... Args>
     uint64_t Ironcast::add_window(Args&&... args) {
         return add_window<W>({}, std::forward<Args>(args)...);
+    }
+
+    template<std::derived_from<Plugin> P, typename... Args>
+    P& Ironcast::add_plugin(Args &&... args) {
+        return static_cast<P&>(pluginManager_.add(std::make_unique<P>(std::forward<Args>(args)...)));
+    }
+
+    template<std::derived_from<Plugin> P>
+    P* Ironcast::plugin() {
+        return pluginManager_.get<P>();
     }
 }

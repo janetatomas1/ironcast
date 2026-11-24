@@ -85,6 +85,7 @@ namespace ironcast {
         // SDL shuts down with the windows; no more wake events after that.
         wake_on_log(false);
         onExit_();
+        pluginManager_.destroy();
         windowManager_.destroy();
     }
 
@@ -295,5 +296,9 @@ namespace ironcast {
 
     Signal<>& Ironcast::on_exit() {
         return onExit_;
+    }
+
+    void Ironcast::remove_plugin(Plugin& plugin) {
+        pluginManager_.remove(plugin);
     }
 }
