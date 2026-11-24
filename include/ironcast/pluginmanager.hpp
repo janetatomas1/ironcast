@@ -4,17 +4,29 @@
 #include <memory>
 #include <vector>
 
+#include <function2/function2.hpp>
+
+#include "ironcast/action.hpp"
 #include "ironcast/plugin.hpp"
 
 namespace ironcast {
     // Owns the app's plugins. Internal to Ironcast, which forwards what apps need (add_plugin(),
     // remove_plugin(), plugin()).
     class PluginManager {
-        Ironcast& app_;
+    public:
+        // Queues an action for the next dispatch (Ironcast::add_action()).
+        using Post = fu2::unique_function<void(action&&)>;
+        // Installs a plugin (Ironcast calls Plugin::install() with itself).
+        using Install = fu2::unique_function<void(Plugin&)>;
+
+    private:
+        Post post_;
+        Install install_;
         std::vector<std::unique_ptr<Plugin>> plugins_;
 
     public:
-        explicit PluginManager(Ironcast& app);
+        // Takes the app's hooks rather than the app, so it can be tested without one.
+        PluginManager(Post post, Install install);
         PluginManager(const PluginManager&) = delete;
         PluginManager& operator=(const PluginManager&) = delete;
 

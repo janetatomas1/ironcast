@@ -44,7 +44,10 @@ namespace ironcast {
         Signal<Window&> onWindowRemove_;
         Signal<> onExit_;
         // Plugins are destroyed (via destroy()) before the windows.
-        PluginManager pluginManager_ = PluginManager(*this);
+        PluginManager pluginManager_ = PluginManager(
+            [this](action&& fn) { add_action(std::move(fn)); },
+            [this](Plugin& plugin) { plugin.install(*this); }
+        );
 
         void init();
         void destroy();

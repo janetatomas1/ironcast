@@ -10,6 +10,7 @@ set(
     series_test
     actionmanager_test
     container_test
+    pluginmanager_test
 )
 
 foreach(test ${IRONCAST_TESTS})
