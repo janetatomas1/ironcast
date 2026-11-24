@@ -49,6 +49,8 @@ set(
     ${IRONCAST_SOURCE_DIR}/dockarea.cpp
     ${IRONCAST_SOURCE_DIR}/style.cpp
     ${IRONCAST_SOURCE_DIR}/color.cpp
+    ${IRONCAST_SOURCE_DIR}/plugin.cpp
+    ${IRONCAST_SOURCE_DIR}/pluginmanager.cpp
 )
 
 find_package(sdl REQUIRED)
